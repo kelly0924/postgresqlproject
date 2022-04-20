@@ -1,0 +1,50 @@
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="idValue">
+    <input type="text" id="pwValue">
+    <input type="button" value="로그인" onclick="loginEvent()">
+    <input type="button" value="회원 가입" onclick="memberJoinEvent()">
+
+    <script>
+
+        const loginEvent = () =>{
+          fetch("/account/login",{//result 에 저장이 된다. 
+                "method": "POST", //요청하는     제이쓴 키 값으로 되였있다. 
+                "headers":{// 값을 여려가 들어 간다.
+                    "Content-Type":"application/json"
+                } ,//
+                "body": JSON.stringify({
+                    "id": document.getElementById("idValue").value,
+                    "pw": document.getElementById("pwValue").value,//백엔드가 미리 정해 놓은대로 적으면 된다. 
+                    //백엔드로 요청이 보내 진다. 
+                }) 
+                //body에 내가 넣고 시피은 값을 적어야 한다 그 위는 고정 값
+            })//첫, apiName, 객체
+            //JSON.stringify()  json은 문자로 바꿔서 보내 줘야 한다. 위쪽 내용은 프론트엔드가 필요한 정보이고 body에 내용이 
+            // 백엔드에 보내 진다. 
+            //실질적으로는 body만 보낸다.
+            .then((result)=>{
+               return result.json()//받아 온 것을 json으로 바꿔 준다. 애도 비동이 처리
+            })
+            .then((result)=>{//위에 것을 하고 나면 해달라 , 윗쪽 비동기가 끝나면 이 코드를 실행 시켜 달라 promiss
+                if(result.sucess == true){
+                    location.href="/memoPage"
+                }else{
+                    alert("로그인 실패")
+                }
+            })
+            
+        }
+
+        const memberJoinEvent = ()=>{
+            location.href="/memberJoin"
+        }
+    </script>
+</body>
+</html>

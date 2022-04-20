@@ -1,0 +1,47 @@
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>memberJoin</title>
+</head>
+<body>
+    <header></header>
+    <main>
+        <div>
+            <div> id: <input type="text" id="idValue"></div>
+            <div> pw: <input type="text" id="pwValue"></div>
+            <div> signupDate: <input type="date" id="dateValue"></div>
+            <div> <input type="button" value="회원 가입" onclick="memberJoinEvent()"></div>
+        </div>
+    </main>
+    
+    <script>
+        const memberJoinEvent = ()=>{
+            fetch("/account/memberSignUp",{//result 에 저장이 된다. 
+                "method": "POST", //요청하는     제이쓴 키 값으로 되였있다. 
+                "headers":{// 값을 여려가 들어 간다.
+                    "Content-Type":"application/json"
+                } ,//
+                "body": JSON.stringify({
+                    "id": document.getElementById("idValue").value,
+                    "pw": document.getElementById("pwValue").value,//백엔드가 미리 정해 놓은대로 적으면 된다. 
+                    "signupDate": document.getElementById("dateValue").value,
+                    //백엔드로 요청이 보내 진다. 
+                }) 
+                
+            })
+            .then((result)=>{
+                return result.json()
+            })
+            .then((result)=>{
+                if(result.succeed==true){
+                    location.href="/loginPage"
+                }else{
+                    alert("회원 가입 실패")
+                }
+            })
+        }
+    </script>
+</body>
+</html>
