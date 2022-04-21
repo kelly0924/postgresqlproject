@@ -1,0 +1,49 @@
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>addMemoPage</title>
+</head>
+<body>
+    <header></header>
+    <main>
+        <div>
+            <div>title:<input type="text" id="inputTitle"></div>
+            <div>contents:<input type="text" id="inputContents"></div>
+            <div>date:<input type="date" id="inputDate"></div>
+            <div>user:<input type="text" id="inputUser"></div>
+            <div><input type="button" value="저장" onclick="addMemoEvent()"></div>
+        </div>
+    </main>
+    
+    <script>
+        const addMemoEvent = () =>{
+            fetch("/memo/addMemoPage",{//result 에 저장이 된다. 
+                "method": "POST", //요청하는     제이쓴 키 값으로 되였있다. 
+                "headers":{// 값을 여려가 들어 간다.
+                    "Content-Type":"application/json"
+                } ,//
+                "body": JSON.stringify({
+                    "title": document.getElementById("inputTitle").value,
+                    "contents": document.getElementById("inputContents").value,//백엔드가 미리 정해 놓은대로 적으면 된다. 
+                    "writeDate": document.getElementById("inputDate").value,
+                    "user": document.getElementById("inputUser").value,
+                    //백엔드로 요청이 보내 진다. 
+                }) 
+                
+            })
+            .then((result)=>{
+                return result.json()
+            })
+            .then((result)=>{
+                if(result.succeed==true){
+                    location.href="/memoPage"//메모페이지로 이동 할 것이다. 
+                }else{
+                    alert("메모 추가 실패")
+                }
+            })
+        }
+    </script>
+</body>
+</html>

@@ -23,4 +23,8 @@ router.get("/memberJoin",(req,res)=>{
 router.get("/memoPage",(req,res)=>{
     res.sendFile(path.join(__dirname,"../memoPage.html"))
 })
+//메모 추가 하기 
+router.get("/addMemo",(req,res)=>{
+    res.sendFile(path.join(__dirname,"../addMemoPage.html"))
+})
 module.exports=router

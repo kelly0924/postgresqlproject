@@ -13,6 +13,8 @@ app.use("/",pagesApi)//등록 (api 이름,내가 사용할 것)
 const accountApi=require("./router/account")//import 하고 
 app.use("/account",accountApi)//Import 한 api 를 등록 해줘야 한다. 
 
+const memoApi=require("./router/memo")
+app.use("/memo",memoApi)
 
 app.listen(port,()=>{
     console.log(port + "번 포트에서 http통신을 시작!!")

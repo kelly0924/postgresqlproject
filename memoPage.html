@@ -7,13 +7,45 @@
 </head>
 <body>
     <header>
-        <h1>메모페이지</h1>
+     <div><input type="button" value="추가" onclick="addMemoEvent()"></div>
+
     </header>
     <main>
         <div id="mainDiv"></div>
     </main>
     <script>
 
+        fetch("/memo/memoMainPage")
+            .then((response) => response.json())
+            .then((data) => {
+                //console.log(data.rows.length)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
+                for(let index=0; index<data.rows.length; index++){
+                    let cnt=0;
+                    let resutlDiv=document.getElementById("mainDiv")
+
+                    let newContentDiv=document.createElement("div")
+                    newContentDiv.setAttribute("id",cnt)
+                    resutlDiv.appendChild(newContentDiv)
+                    newContentDiv.innerHTML=data.rows[index].memotitle //제목
+
+                    let newWriteDateDiv=document.createElement("div")
+                    newWriteDateDiv.setAttribute("id",cnt)
+                    resutlDiv.appendChild(newWriteDateDiv)
+                    newWriteDateDiv.innerHTML=data.rows[index].memodate
+
+                    let newUserDiv=document.createElement("div")
+                    newUserDiv.setAttribute("id",cnt)
+                    resutlDiv.appendChild(newUserDiv)
+                    newUserDiv.innerHTML=data.rows[index].userid
+                    cnt=cnt+1
+                }
+
+            })// 백엔드에서 보내준 json 형태의 데이터
+     
+        
+        const addMemoEvent=()=>{
+            location.href="/addMemo"
+        } 
     </script>
 </body>
 </html>
