@@ -27,4 +27,5 @@ router.get("/memoPage",(req,res)=>{
 router.get("/addMemo",(req,res)=>{
     res.sendFile(path.join(__dirname,"../addMemoPage.html"))
 })
+
 module.exports=router
