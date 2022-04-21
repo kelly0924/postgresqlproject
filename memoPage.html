@@ -18,15 +18,16 @@
         fetch("/memo/memoMainPage")
             .then((response) => response.json())
             .then((data) => {
-                //console.log(data.rows.length)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
+                console.log(data.rows[0].memoid)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
+                let cnt=0;
                 for(let index=0; index<data.rows.length; index++){
-                    let cnt=0;
                     let resutlDiv=document.getElementById("mainDiv")
 
                     let newContentDiv=document.createElement("div")
                     newContentDiv.setAttribute("id",cnt)
                     resutlDiv.appendChild(newContentDiv)
                     newContentDiv.innerHTML=data.rows[index].memotitle //제목
+                    newContentDiv.addEventListener("click", function(){viewMemo(this.id)})//제목을 클릭 했을 경우 
 
                     let newWriteDateDiv=document.createElement("div")
                     newWriteDateDiv.setAttribute("id",cnt)
@@ -46,6 +47,12 @@
         const addMemoEvent=()=>{
             location.href="/addMemo"
         } 
+
+        const viewMemo = (index) =>{//클릭이 메모에 몇번째가 되는 지를 받아 올 수 있다. 
+            console.log(index)
+           //location.href="comentViewPage.html"
+           window.location.href = "comentViewPage.html?index=" + index;
+        }
     </script>
 </body>
 </html>
