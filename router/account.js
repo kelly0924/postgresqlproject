@@ -1,7 +1,7 @@
 const router=require("express").Router()
 const path=require("path")// 파일 경로를 조합 해주는 패케지 이다.  이것이 있어야 
 const pgInit=require("./postgreSqlDb")//데이터 베이스를 사용하기 위해서 
-const {Client}=require("pg")//pg 는 Client 로 이름 고정 여러개 하기 위해 
+const {Client}=require("pg")//pg 는 Client 로 이름 고정 여러개 하기 위해 pg 패캐지를 사용해야 postgrSQL을 사용 가능 하다. 
 
 router.post("/login",(req,res)=>{
     //프론트엔드로 부터 받아온 값
@@ -39,6 +39,7 @@ router.post("/login",(req,res)=>{
     })
     //프론드에게 값을 반환
    //db.end() 위에 것랑 같이 돌아 가서 미리 끝나 버린다. 
+
 })
 //회원 가입
 
@@ -74,6 +75,7 @@ router.post("/memberSignUp",(req,res)=>{
     })
    
 })
+
 
 
 

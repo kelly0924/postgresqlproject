@@ -30,7 +30,7 @@ router.get("/memoMainPage",(req,res)=>{
 //메모 추가 하기 
 
 router.post("/addMemoPage",(req,res)=>{
-
+    // router.post("/",(req,res)=>{
     const titleValue=req.body.title
     const contentsValue=req.body.contents
     const dateValue=req.body.writeDate
