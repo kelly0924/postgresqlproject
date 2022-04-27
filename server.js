@@ -21,8 +21,8 @@ app.use("/coment",comentApi)
 
 //mongoDB
 
-const mongoApi=require("./dataBases/mongoCon")
-app.use("/mongoCon",mongoApi)
+// const mongoApi=require("./dataBases/mongoCon")
+// app.use("/mongoCon",mongoApi)
 
 app.listen(port,()=>{
     console.log(port + "번 포트에서 http통신을 시작!!")

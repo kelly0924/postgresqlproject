@@ -2,6 +2,8 @@ const router=require("express").Router()
 const path=require("path")// 파일 경로를 조합 해주는 패케지 이다.  이것이 있어야 
 const pgInit=require("./postgreSqlDb")//데이터 베이스를 사용하기 위해서 
 const {Client}=require("pg")//pg 는 Client 로 이름 고정 여러개 하기 위해 pg 패캐지를 사용해야 postgrSQL을 사용 가능 하다. 
+const logFuntion=require("./logFun")
+const moment = require("moment")
 
 router.post("/login",(req,res)=>{
     //프론트엔드로 부터 받아온 값
@@ -9,7 +11,8 @@ router.post("/login",(req,res)=>{
     const pwValue= req.body.pw
     //프론트 엔드로 보내 줄값 json으로 받았으니까 json으로 보내 줄것이다. 
     const db = new Client(pgInit)
-
+    // console.log(moment(new Date().getTime()))
+    //console.log(req.hostname);
     const result ={
         "sucess":false
     }
@@ -20,15 +23,19 @@ router.post("/login",(req,res)=>{
     })
     const sql="SELECT * FROM  memoschema.user WHERE userid=$1 and userpw=$2"
     const values=[idValue,pwValue]
-    console.log(values)
+    // console.log(values)
 
     db.query(sql,values,(err,data) =>{
         console.log("검사"+ err) 
         if(!err){
             const row=data.rows;
+            // console.log(row)
             if(row.length == 0){
             }else {
                 result.sucess=true
+                const apiName="login"//????
+                const apiCallTime=getCurrentDate()
+                logFuntion(idValue,apiName,row,apiCallTime)
             }
         }
         else {
@@ -43,7 +50,7 @@ router.post("/login",(req,res)=>{
 })
 //회원 가입
 
-router.post("/memberSignUp",(req,res)=>{
+router.post("/signUp",(req,res)=>{
     const idValue=req.body.id
     const pwValue=req.body.pw
     const signDate=req.body.signupDate
@@ -71,13 +78,25 @@ router.post("/memberSignUp",(req,res)=>{
         }
 
        res.send(result)
+        const apiName="signUp"//????
+        const apiCallTime=moment(new Date().getTime())
+        logFuntion(idValue,apiName,rows,apiCallTime)
        db.end()
     })
    
 })
 
 
-
+const getCurrentDate=()=>{
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var today = date.getDate();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+    return new Date(Date.UTC(year, month, today, hours, minutes, seconds));
+}
 
 module.exports=router//
 
