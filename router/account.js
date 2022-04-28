@@ -4,6 +4,7 @@ const pgInit=require("./postgreSqlDb")//데이터 베이스를 사용하기 위�
 const {Client}=require("pg")//pg 는 Client 로 이름 고정 여러개 하기 위해 pg 패캐지를 사용해야 postgrSQL을 사용 가능 하다. 
 const logFuntion=require("./logFun")
 const moment = require("moment")
+const request = require('request')
 
 router.post("/login",(req,res)=>{
     //프론트엔드로 부터 받아온 값
@@ -35,7 +36,24 @@ router.post("/login",(req,res)=>{
                 result.sucess=true
                 const apiName="login"//????
                 const apiCallTime=getCurrentDate()
-                logFuntion(idValue,apiName,row,apiCallTime)
+                // logFuntion(idValue,apiName,row,apiCallTime)
+
+                //Api 호출하기 
+                let options = {
+                    uri: "/logAPi/",
+                    method: 'POST',
+                    body:{
+                      userId:idValue,
+                      name:apiName,
+                      sendDate:row,
+                      time:apiCallTime
+                    },
+                    json:true //json으로 보낼경우 true로 해주어야 header값이 json으로 설정됩니다.
+                }
+                request(options,function(err,response,body){
+                    console.log("api 호출")//애는 호출 되는데 
+                    //실제 options에 api는 호출 못함 
+                })
             }
         }
         else {
