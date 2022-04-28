@@ -4,9 +4,9 @@ const pgInit=require("./postgreSqlDb")//데이터 베이스를 사용하기 위�
 const {Client}=require("pg")//pg 는 Client 로 이름 고정 여러개 하기 위해 pg 패캐지를 사용해야 postgrSQL을 사용 가능 하다. 
 const logFuntion=require("./logFun")
 const moment = require("moment")
-const request = require('request')
+const axios=require("axios")
 
-router.post("/login",(req,res)=>{
+router.post("/",(req,res)=>{
     //프론트엔드로 부터 받아온 값
     const idValue= req.body.id
     const pwValue= req.body.pw
@@ -36,24 +36,24 @@ router.post("/login",(req,res)=>{
                 result.sucess=true
                 const apiName="login"//????
                 const apiCallTime=getCurrentDate()
+
+                //function으로 호출 하기 
                 // logFuntion(idValue,apiName,row,apiCallTime)
 
-                //Api 호출하기 
-                let options = {
-                    uri: "/logAPi/",
-                    method: 'POST',
-                    body:{
-                      userId:idValue,
-                      name:apiName,
-                      sendDate:row,
-                      time:apiCallTime
-                    },
-                    json:true //json으로 보낼경우 true로 해주어야 header값이 json으로 설정됩니다.
-                }
-                request(options,function(err,response,body){
-                    console.log("api 호출")//애는 호출 되는데 
-                    //실제 options에 api는 호출 못함 
+                //axios로 api 호출 하기 
+                axios.post("http://localhost:8000/logAPi",{
+                    userId:idValue,
+                    name:apiName,
+                    sendDate:row,
+                    time:apiCallTime
                 })
+                .then(function(response){
+                    console.log("axios",response.data)
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+
             }
         }
         else {
@@ -94,11 +94,30 @@ router.post("/signUp",(req,res)=>{
         }else{
             console.log(err)
         }
-
-       res.send(result)
+       
+       
+       //loggin 남기기
         const apiName="signUp"//????
         const apiCallTime=moment(new Date().getTime())
-        logFuntion(idValue,apiName,rows,apiCallTime)
+
+        //function 으로 하기 
+        //logFuntion(idValue,apiName,rows,apiCallTime)
+
+        //axios api 로 호출 하기 
+        axios.post("http://localhost:8000/logAPi",{
+                    userId:idValue,
+                    name:apiName,
+                    sendDate:row,
+                    time:apiCallTime
+                })
+                .then(function(response){
+                    console.log("axios",response.data)
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+
+        res.send(result)
        db.end()
     })
    

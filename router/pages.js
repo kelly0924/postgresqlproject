@@ -23,6 +23,7 @@ router.get("/loginPage",(req,res)=>{
     const idValue="userid"
     const row=[{"file":"move"}]
     const apiCallTime=getCurrentDate()
+
     logFuntion(idValue,apiName,row,apiCallTime)
  
     res.sendFile(path.join(__dirname,"../loginPage.html"))
@@ -35,6 +36,7 @@ router.get("/memberJoin",(req,res)=>{
     const idValue="userid"
     const row=[{"file":"move"}]
     const apiCallTime=getCurrentDate()
+
     logFuntion(idValue,apiName,row,apiCallTime)
 
     res.sendFile(path.join(__dirname,"../memberJoin.html"))
@@ -49,6 +51,7 @@ router.get("/memoPage",(req,res)=>{
     const idValue="userid"
     const row=[{"file":"move"}]
     const apiCallTime=getCurrentDate()
+
     logFuntion(idValue,apiName,row,apiCallTime)
 
     res.sendFile(path.join(__dirname,"../memoPage.html"))
@@ -62,6 +65,7 @@ router.get("/addMemo",(req,res)=>{
     const idValue="userid"
     const row=[{"file":"move"}]
     const apiCallTime=getCurrentDate()
+    
     logFuntion(idValue,apiName,row,apiCallTime)
 
     res.sendFile(path.join(__dirname,"../addMemoPage.html"))

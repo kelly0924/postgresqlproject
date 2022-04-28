@@ -15,7 +15,7 @@
     </main>
     <script>
 
-        fetch("/memo/memoMainPage")
+        fetch("/memo/all")
             .then((response) => response.json())
             .then((data) => {
                 console.log(data.rows[0].memoid)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
