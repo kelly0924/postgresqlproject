@@ -2,6 +2,8 @@ const router=require("express").Router()
 const path=require("path")// 파일 경로를 조합 해주는 패케지 이다.  이것이 있어야 
 const {Client}=require("pg")//pg 는 Client 로 이름 고정 여러개 하기 위해 
 const pgInit=require("./postgreSqlDb")//데이터 베이스를 사용하기 위해서 
+const moment = require("moment")
+const axios=require("axios")
 
 router.post("/all",(req,res)=>{
     console.log("호출")
@@ -40,7 +42,35 @@ router.post("/all",(req,res)=>{
         res.send(result)// 값만 보내 줄것이다. 값을 보내  때는 send로 보내 준다.
     })
 
-   
+   //axios로 api 호출 하기 
+   const apiName="coment"//????
+   const apiCallTime=getCurrentDate()
+   const idValue="coment"
+
+   axios.post("http://localhost:8000/logAPi",{
+        userId:idValue,
+        name:apiName,
+        sendDate:result,
+        time:apiCallTime
+    })
+    .then(function(response){
+        console.log("axios",response.data)
+    })
+    .catch(function (error) {
+        console.log(error)
+    })
+
 })
+
+const getCurrentDate=()=>{
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var today = date.getDate();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+    return new Date(Date.UTC(year, month, today, hours, minutes, seconds));
+}
 
 module.exports=router//
