@@ -72,6 +72,21 @@ router.get("/addMemo",(req,res)=>{
 
 
 })
+//coment 
+router.get("/coment",(req,res)=>{
+
+    // const apiName="addMemo"//????
+    // const idValue="userid"
+    // const row=[{"file":"move"}]
+    // const apiCallTime=getCurrentDate()
+    
+    // logFuntion(idValue,apiName,row,apiCallTime)
+
+    res.sendFile(path.join(__dirname,"../coment.html"))
+
+
+})
+
 
 const getCurrentDate=()=>{
     var date = new Date();

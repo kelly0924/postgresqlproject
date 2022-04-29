@@ -1,0 +1,76 @@
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>commnet page</h1>
+    <header></header>
+    <main>
+        <div id="mainDiv"></div>
+    </main>
+    <script>     
+
+    const params = location.search.substr(location.search.indexOf("?") + 1);
+    const temp = params.split("=");
+    const index=temp[1]
+    console.log(index)
+    
+    fetch("/coment/all",{
+        "method": "POST", //요청하는     제이쓴 키 값으로 되였있다. 
+        "headers":{// 값을 여려가 들어 간다.
+            "Content-Type":"application/json"
+        } ,//
+        "body": JSON.stringify({
+            "num":index 
+            //백엔드로 요청이 보내 진다. 
+        }) 
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        console.log(data.contents.rows[0].memocontents)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
+        console.log(data.coment.rows[0].memoid)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
+        console.log(data.coment.rows[0])//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
+        let cnt=0;
+
+        let resutlDiv=document.getElementById("mainDiv")
+        let newContentDiv=document.createElement("div")
+        newContentDiv.setAttribute("id",cnt)
+        resutlDiv.appendChild(newContentDiv)
+        newContentDiv.innerHTML=data.contents.rows[0].memocontents //제목
+
+        for(let index=0; index<data.coment.rows.length; index++){
+            let newWriteDateDiv=document.createElement("div")
+            newWriteDateDiv.setAttribute("id",cnt)
+            resutlDiv.appendChild(newWriteDateDiv)
+            newWriteDateDiv.innerHTML=data.coment.rows[index].memoid
+
+            let newUserDiv=document.createElement("div")
+            newUserDiv.setAttribute("id",cnt)
+            resutlDiv.appendChild(newUserDiv)
+            newUserDiv.innerHTML=data.coment.rows[index].userid
+
+
+            let comentDiv=document.createElement("div")
+            comentDiv.setAttribute("id",cnt)
+            resutlDiv.appendChild(comentDiv)
+            comentDiv.innerHTML=data.coment.rows[index].comenttext
+
+            let comentDateDiv=document.createElement("div")
+            comentDateDiv.setAttribute("id",cnt)
+            resutlDiv.appendChild(comentDateDiv)
+            comentDateDiv.innerHTML=data.coment.rows[index].comentdate
+            cnt=cnt+1
+        }
+
+    })// 백엔드에서 보내준 json 형태의 데이터
+    
+
+
+
+
+    </script>
+</body>
+</html>

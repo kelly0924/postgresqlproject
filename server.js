@@ -19,6 +19,8 @@ app.use("/memo",memoApi)
 const comentApi=require("./router/coment")
 app.use("/coment",comentApi)
 
+
+
 //mongoDB
 
 const mongoApi=require("./dataBases/logApi")
