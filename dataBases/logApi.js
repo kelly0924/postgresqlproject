@@ -3,7 +3,7 @@ const path=require("path")
 
 
 router.post("/",(req,res)=>{
-    console.log("logApi: ",req.body.userId,req.body.name,req.body.time)
+    //console.log("logApi: ",req.body.userId,req.body.name,req.body.time)
     
     const result={
         "success":false

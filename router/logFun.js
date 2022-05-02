@@ -7,27 +7,27 @@ const url = "mongodb://localhost:27017/";
 
 const logFun=(userid,apiName,data, calTime)=>{
     console.log(userid,calTime)
-    // MongoClient.connect(url, function(err, db) {
-    //         if (err){
-    //             console.log(err)
-    //         }
-    //         const dbo = db.db("mydb");//디비 이름
-    //         const myobj = { 
-    //             usid: userid,
-    //             apiname: apiName,
-    //             senddata:data, 
-    //             apicalltime: calTime
-    //         }//삽입일  내용
+    MongoClient.connect(url, function(err, db) {
+            if (err){
+                console.log(err)
+            }
+            const dbo = db.db("mydb");//디비 이름
+            const myobj = { 
+                usid: userid,
+                apiname: apiName,
+                senddata:data, 
+                apicalltime: calTime
+            }//삽입일  내용
     
-    //         dbo.collection("record").insertOne(myobj, function(err, res) {
-    //             if (err){
-    //             console.log(err)
-    //             }else{
-    //                 console.log("1 document inserted");
-    //             }
-    //             db.close();
-    //         });
-    // })
+            dbo.collection("record").insertOne(myobj, function(err, res) {
+                if (err){
+                console.log(err)
+                }else{
+                    console.log("1 document inserted");
+                }
+                db.close();
+            });
+    })
 }
 
 module.exports=logFun

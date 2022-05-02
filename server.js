@@ -26,6 +26,10 @@ app.use("/coment",comentApi)
 const mongoApi=require("./dataBases/logApi")
 app.use("/logAPi",mongoApi)
 
+//upload file
+const uploadApi=require("./router/uploadApi")
+app.use("/loadImg",uploadApi)
+
 app.listen(port,()=>{
     console.log(port + "번 포트에서 http통신을 시작!!")
 })//http 통신을 시작 하겠다.(app.listen) port에서 듣겠다.  뒤에서 그래서 내가 http 통신을 시작 할 때 수행할 함수를 쓰겠다. 

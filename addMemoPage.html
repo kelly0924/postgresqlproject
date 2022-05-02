@@ -14,6 +14,12 @@
             <div>date:<input type="date" id="inputDate"></div>
             <div>user:<input type="text" id="inputUser"></div>
             <div><input type="button" value="저장" onclick="addMemoEvent()"></div>
+
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="img">
+                <button type="submit" >upload</button>
+            </form>
+            
         </div>
     </main>
     
