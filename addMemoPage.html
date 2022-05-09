@@ -13,12 +13,17 @@
             <div>contents:<input type="text" id="inputContents"></div>
             <div>date:<input type="date" id="inputDate"></div>
             <div>user:<input type="text" id="inputUser"></div>
+
+            <input type="file" id="uploadFile">
+            <input type="button" value="upload" onclick="uploadImgEvent()">
+            
+
             <div><input type="button" value="저장" onclick="addMemoEvent()"></div>
 
-            <form action="/upload" method="post" enctype="multipart/form-data">
+            <!-- <form action="/upload" method="post" enctype="multipart/form-data">
                 <input type="file" name="img">
-                <button type="submit" >upload</button>
-            </form>
+                <input type="button" value="upload" onclick="uploadImgEvent()">
+            </form> -->
             
         </div>
     </main>
@@ -47,6 +52,34 @@
                     location.href="/memoPage"//메모페이지로 이동 할 것이다. 
                 }else{
                     alert("메모 추가 실패")
+                }
+            })
+        }
+
+        const uploadImgEvent = ()=>{
+            const form = new FormData();
+            form.enctype = "multipart/form-data";
+            const inputImg=document.getElementById("uploadFile").files[0]
+        
+            console.log(inputImg)
+            form.append("img", inputImg);
+        
+            fetch("/upload",{
+                method: "POST",
+                headers: {
+                //"Content-Type": "multipart/form-data",
+                }, 
+                body: form
+                // body 엔 JS object 가 아닌 form 을 그대로 보낸다.
+            })
+            .then((result)=>{
+                return result.json()
+            })
+            .then((result)=>{
+                if(result.succeed==true){
+                    //location.href="/memoPage"//메모페이지로 이동 할 것이다. 
+                }else{
+                    alert("img upload 실패")
                 }
             })
         }
