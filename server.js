@@ -28,7 +28,7 @@ app.use("/logAPi",mongoApi)
 
 //upload file
 const uploadApi=require("./router/uploadApi")
-app.use("/loadImg",uploadApi)
+app.use("/upload",uploadApi)
 
 app.listen(port,()=>{
     console.log(port + "번 포트에서 http통신을 시작!!")

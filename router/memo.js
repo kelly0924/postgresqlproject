@@ -66,13 +66,25 @@ router.post("/",(req,res)=>{
             console.log(err)
         }
     })
+
+    //img url 을 얻어서 디비에 저장 하기 
+
+    // axios.get("http://localhost:8000/upload")
+    //     // upload 하는 api 를 호출 하여 api 가 보내주는 값을 가져 올 것이다. 
+    //     .then(function(response){
+    //         console.log("axios",response)
+    //     })
+    //     .catch(function (error) {
+    //         console.log(error)
+    //     })
+
+
     const sql="INSERT INTO memoschema.memo (userid,memotitle,memocontents,memodate) VALUES($1,$2,$3,$4)"
     const valuses=[userValue,titleValue,contentsValue,dateValue]
     db.query(sql,valuses,(err,row) =>{
         if(!err){
 
             result.succeed=true
-
            //axios로 api 호출 하기 
            const apiName="login"//????
            const apiCallTime=getCurrentDate()
