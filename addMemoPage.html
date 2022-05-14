@@ -14,22 +14,68 @@
             <div>date:<input type="date" id="inputDate"></div>
             <div>user:<input type="text" id="inputUser"></div>
 
-            <input type="file" id="uploadFile">
-            <input type="button" value="upload" onclick="uploadImgEvent()">
-            
+            <input type="file" id="uploadFile" onchange="readURL(this);">
+            <div id="imgContain">
+                <img id="preview" />
+            </div>
+            <input type="button" value="X" onclick="removeImgEvent()">
 
-            <div><input type="button" value="저장" onclick="addMemoEvent()"></div>
+             <div>
+                <input type="button" value="저장" onclick="addMemoEvent()" >
+              
+            </div>
 
-            <!-- <form action="/upload" method="post" enctype="multipart/form-data">
-                <input type="file" name="img">
-                <input type="button" value="upload" onclick="uploadImgEvent()">
-            </form> -->
             
         </div>
     </main>
     
     <script>
+        const readURL=(input)=>{
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }else{
+                    document.getElementById('preview').src = "";
+                }
+        }
+        const removeImgEvent=()=>{
+            document.getElementById("uploadFile").value=""
+            document.getElementById('preview').src = "";
+        }
+        //저장 버튼 이벤트
         const addMemoEvent = () =>{
+
+            //이미지 업로드 
+            const form = new FormData();
+            form.enctype = "multipart/form-data";
+            const inputImg=document.getElementById("uploadFile").files[0]//이미지 자체를 넣기
+            console.log(inputImg)
+            form.append("img", inputImg);
+        
+            fetch("/upload",{
+                method: "POST",
+                headers: {
+                //"Content-Type": "multipart/form-data",
+                }, 
+                body: form
+                // body 엔 JS object 가 아닌 form 을 그대로 보낸다.
+            })
+            .then((result)=>{
+                return result.json()
+            })
+            .then((result)=>{
+                if(result.succeed==true){
+                    //location.href="/memoPage"//메모페이지로 이동 할 것이다. 
+                }else{
+                    alert("img upload 실패")
+                }
+            })
+
+            //메모 저장 내용 저장
+
             fetch("/memo",{//result 에 저장이 된다. 
                 "method": "POST", //요청하는     제이쓴 키 값으로 되였있다. 
                 "headers":{// 값을 여려가 들어 간다.
@@ -56,33 +102,7 @@
             })
         }
 
-        const uploadImgEvent = ()=>{
-            const form = new FormData();
-            form.enctype = "multipart/form-data";
-            const inputImg=document.getElementById("uploadFile").files[0]
         
-            console.log(inputImg)
-            form.append("img", inputImg);
-        
-            fetch("/upload",{
-                method: "POST",
-                headers: {
-                //"Content-Type": "multipart/form-data",
-                }, 
-                body: form
-                // body 엔 JS object 가 아닌 form 을 그대로 보낸다.
-            })
-            .then((result)=>{
-                return result.json()
-            })
-            .then((result)=>{
-                if(result.succeed==true){
-                    //location.href="/memoPage"//메모페이지로 이동 할 것이다. 
-                }else{
-                    alert("img upload 실패")
-                }
-            })
-        }
     </script>
 </body>
 </html>

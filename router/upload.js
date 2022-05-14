@@ -15,6 +15,9 @@ const upload = multer({
         contentType: multerS3.AUTO_CONTENT_TYPE,
         key: (req, file, cb) => { 
             cb(null, `${Date.now()}_${file.originalname}`)
+        },
+        limits: {
+            fileSize: 5*1024*1024 // 5MB 파일 최대 사이즈 지정
         }
     })
 });

@@ -6,9 +6,7 @@ const {Client}=require("pg")//pg 는 Client 로 이름 고정 여러개 하기 �
 const pgInit=require("./postgreSqlDb")//데이터 베이스를 사용하기 위해서 
 
 router.post('/', upload.single('img'), (req, res) => {//이미지를 s3에 저장 하는 api 
-    console.log(req)
-   
-    console.log("api에서  url" ,req.file.location)
+   // console.log("api에서  url" ,req.file.location)
     const urlImg=req.file.location
     const usid="coco"
     const memoid=1
