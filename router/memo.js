@@ -55,46 +55,61 @@ router.post("/",(req,res)=>{
     const contentsValue=req.body.contents
     const dateValue=req.body.writeDate
     const userValue=req.body.user
+    const imgurlValue=""
+
+    //upload api 를 통해서 s3의 저장되는 img url를 가져 올 수 있다.
+    axios.get("http://localhost:8000/upload")
+    .then(function(response) {
+        imgurlValue=response
+        console.log( "제바 여기 출력 되라",response.data);
+    })
+    .catch(function(error) {
+        console.log(error);
+    });
+    
 
     const db = new Client(pgInit)
     const result={
         "succeed":false
     }
 
-    db.connect((err)=>{
-        if(err){
-            console.log(err)
-        }
-    })
+    // db.connect((err)=>{
+    //     if(err){
+    //         console.log(err)
+    //     }
+    // })
+
     
-    const sql="INSERT INTO memoschema.memo (userid,memotitle,memocontents,memodate) VALUES($1,$2,$3,$4)"
-    const valuses=[userValue,titleValue,contentsValue,dateValue]
-    db.query(sql,valuses,(err,row) =>{
-        if(!err){
+    // const sql="INSERT INTO memoschema.memo (userid,memotitle,memocontents,imgurl,memodate) VALUES($1,$2,$3,$4,$5)"
+    // const valuses=[userValue,titleValue,contentsValue,imgurlValue,dateValue]
+    // db.query(sql,valuses,(err,row) =>{
+    //     if(!err){
 
-            result.succeed=true
-           //axios로 api 호출 하기 
-           const apiName="login"//????
-           const apiCallTime=getCurrentDate()
-           axios.post("http://localhost:8000/logAPi",{
-            userId:userValue,
-            name:apiName,
-            sendDate:row.rows,
-            time:apiCallTime
-            })
-            .then(function(response){
-                console.log("axios",response.data)
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
-        }else{
-            console.log(err)
-        }
+    //         result.succeed=true
+    //        //axios로 api 호출 하기 
+    //        const apiName="login"//????
+    //        const apiCallTime=getCurrentDate()
+    //        axios.post("http://localhost:8000/logAPi",{
+    //         userId:userValue,
+    //         name:apiName,
+    //         sendDate:row.rows,
+    //         time:apiCallTime
+    //         })
+    //         .then(function(response){
+    //             console.log("axios",response.data)
+    //         })
+    //         .catch(function (error) {
+    //             console.log(error)
+    //         })
+    //     }else{
+    //         console.log(err)
+    //     }
 
-       res.send(result)
-       db.end()
-    })
+    //    res.send(result)
+    //    db.end()
+    // })
+
+    res.send(imgurlValue)
 })
 
 const getCurrentDate=()=>{

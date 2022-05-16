@@ -30,16 +30,24 @@
     })
     .then((response) => response.json())
     .then((data) => {
-        console.log(data.contents.rows[0].memocontents)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
+        console.log(data.contents)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
         console.log(data.coment.rows[0].memoid)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
         console.log(data.coment.rows[0])//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
         let cnt=0;
 
         let resutlDiv=document.getElementById("mainDiv")
+
         let newContentDiv=document.createElement("div")
         newContentDiv.setAttribute("id",cnt)
         resutlDiv.appendChild(newContentDiv)
         newContentDiv.innerHTML=data.contents.rows[0].memocontents //제목
+
+        let newImgUrlDateDiv=document.createElement("img")
+        newImgUrlDateDiv.setAttribute("src",data.contents.rows[0].imgurl)
+        resutlDiv.appendChild(newImgUrlDateDiv)
+        //newImgUrlDateDiv.innerHTML=data.rows[index].imgurl
+        console.log(data.contents.rows[0].imgurl)
+
 
         for(let index=0; index<data.coment.rows.length; index++){
             let newWriteDateDiv=document.createElement("div")
@@ -51,7 +59,6 @@
             newUserDiv.setAttribute("id",cnt)
             resutlDiv.appendChild(newUserDiv)
             newUserDiv.innerHTML=data.coment.rows[index].userid
-
 
             let comentDiv=document.createElement("div")
             comentDiv.setAttribute("id",cnt)

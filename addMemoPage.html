@@ -47,34 +47,15 @@
         }
         //저장 버튼 이벤트
         const addMemoEvent = () =>{
-
             //이미지 업로드 
-            const form = new FormData();
-            form.enctype = "multipart/form-data";
-            const inputImg=document.getElementById("uploadFile").files[0]//이미지 자체를 넣기
-            console.log(inputImg)
-            form.append("img", inputImg);
-        
-            fetch("/upload",{
-                method: "POST",
-                headers: {
-                //"Content-Type": "multipart/form-data",
-                }, 
-                body: form
-                // body 엔 JS object 가 아닌 form 을 그대로 보낸다.
-            })
-            .then((result)=>{
-                return result.json()
-            })
-            .then((result)=>{
-                if(result.succeed==true){
-                    //location.href="/memoPage"//메모페이지로 이동 할 것이다. 
-                }else{
-                    alert("img upload 실패")
-                }
-            })
-
+            memoImgSave()
             //메모 저장 내용 저장
+            memoSaveContentsEvent()
+
+            
+        }
+
+        const memoSaveContentsEvent=()=>{
 
             fetch("/memo",{//result 에 저장이 된다. 
                 "method": "POST", //요청하는     제이쓴 키 값으로 되였있다. 
@@ -102,6 +83,34 @@
             })
         }
 
+
+        const memoImgSave=()=>{
+            //이미지 업로드 
+            const form = new FormData();
+            form.enctype = "multipart/form-data";
+            const inputImg=document.getElementById("uploadFile").files[0]//이미지 자체를 넣기
+            console.log(inputImg)
+            form.append("img", inputImg);
+        
+            fetch("/upload",{
+                method: "POST",
+                headers: {
+                //"Content-Type": "multipart/form-data",
+                }, 
+                body: form
+                // body 엔 JS object 가 아닌 form 을 그대로 보낸다.
+            })
+            .then((result)=>{
+                return result.json()
+            })
+            .then((result)=>{
+                if(result.succeed==true){
+                    //location.href="/memoPage"//메모페이지로 이동 할 것이다. 
+                }else{
+                    alert("img upload 실패")
+                }
+            })
+        }
         
     </script>
 </body>

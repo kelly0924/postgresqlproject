@@ -20,7 +20,7 @@ router.post("/all",(req,res)=>{
             console.log(err)
         }
     })
-    const sql="SELECT memocontents FROM memoschema.memo WHERE memoid = $1"   
+    const sql="SELECT * FROM memoschema.memo WHERE memoid = $1"   
     const sqlcoment="SELECT * FROM memoschema.coment"
 
     const values=[mid]

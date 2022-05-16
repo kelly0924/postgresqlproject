@@ -8,33 +8,34 @@ const pgInit=require("./postgreSqlDb")//데이터 베이스를 사용하기 위�
 router.post('/', upload.single('img'), (req, res) => {//이미지를 s3에 저장 하는 api 
    // console.log("api에서  url" ,req.file.location)
     const urlImg=req.file.location
-    const result={
-        "succeed":false
-    }
-    const db = new Client(pgInit)
+    // const result={
+    //     "succeed":false
+    // }
+    // const db = new Client(pgInit)
 
-    db.connect((err) => {
-        if(err) {
-            console.log(err)
-        }
-        else{
-            console.log("connect db")
-        }
-    })
+    // db.connect((err) => {
+    //     if(err) {
+    //         console.log(err)
+    //     }
+    //     else{
+    //         console.log("connect db")
+    //     }
+    // })
 
-    const sql="INSERT INTO memoschema.memo(imgurl) VALUES($1)"//img url을 과 유저이름 
-    const valuses=[urlImg]
-    db.query(sql,valuses,(err,row) =>{
-        if(!err){
-            result.succeed=true//이미지가 성공적으로 잘 저장 여부 알려 주기 
-        }else{
-            console.log(err)
-        }
+    // const sql="INSERT INTO memoschema.memo(imgurl) VALUES($1)"//img url을 과 유저이름 
+    // const valuses=[urlImg]
+    // db.query(sql,valuses,(err,row) =>{
+    //     if(!err){
+    //         result.succeed=true//이미지가 성공적으로 잘 저장 여부 알려 주기 
+    //     }else{
+    //         console.log(err)
+    //     }
 
-       res.send(result)
-       db.end()
-    })
+    //    res.send(result)
+    //    db.end()
+    // })
 
+    res.send(urlImg)
 })
 
 
