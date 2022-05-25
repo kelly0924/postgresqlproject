@@ -18,7 +18,7 @@
         fetch("/memo/all")
             .then((response) => response.json())
             .then((data) => {
-                console.log(data.rows[0].memoid)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
+                console.log("메모 id",data.rows[0].memoid)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
                 let cnt=0;
                 for(let index=0; index<data.rows.length; index++){
                     let resutlDiv=document.getElementById("mainDiv")
@@ -28,6 +28,7 @@
                     resutlDiv.appendChild(newContentDiv)
                     newContentDiv.innerHTML=data.rows[index].memotitle //제목
                     newContentDiv.addEventListener("click", function(){viewMemo(this.id)})//제목을 클릭 했을 경우 
+                    console.log("메모 id", index,"번째",data.rows[index].memoid)
 
                     let newWriteDateDiv=document.createElement("div")
                     newWriteDateDiv.setAttribute("id",cnt)
@@ -38,12 +39,6 @@
                     newUserDiv.setAttribute("id",cnt)
                     resutlDiv.appendChild(newUserDiv)
                     newUserDiv.innerHTML=data.rows[index].userid
-
-                    // let newImgUrlDateDiv=document.createElement("img")
-                    // newImgUrlDateDiv.setAttribute("src",data.rows[index].imgurl)
-                    // resutlDiv.appendChild(newImgUrlDateDiv)
-                    // //newImgUrlDateDiv.innerHTML=data.rows[index].imgurl
-                    // console.log(data.rows[index].imgurl)
                     cnt=cnt+1
                 }
 
@@ -55,7 +50,7 @@
         } 
 
         const viewMemo = (index) =>{//클릭이 메모에 몇번째가 되는 지를 받아 올 수 있다. 
-            console.log(index)
+            console.log("클릭된 메모 아이디 출력",index)
            location.href = "/coment?index="+index
         }
     </script>

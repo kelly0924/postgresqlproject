@@ -30,7 +30,7 @@
     </main>
     
     <script>
-        const readURL=(input)=>{
+        const readURL=(input)=>{//화면에 선택한 이미지 출력 하기 
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
@@ -41,58 +41,19 @@
                     document.getElementById('preview').src = "";
                 }
         }
-        const removeImgEvent=()=>{
+        const removeImgEvent=()=>{//선택한 이미지 삭제 하기 
             document.getElementById("uploadFile").value=""
             document.getElementById('preview').src = "";
         }
         //저장 버튼 이벤트
         const addMemoEvent = () =>{
-            //이미지 업로드 
-            memoImgSave()
-            //메모 저장 내용 저장
-            memoSaveContentsEvent()
-
-            
-        }
-
-        const memoSaveContentsEvent=()=>{
-
-            fetch("/memo",{//result 에 저장이 된다. 
-                "method": "POST", //요청하는     제이쓴 키 값으로 되였있다. 
-                "headers":{// 값을 여려가 들어 간다.
-                    "Content-Type":"application/json"
-                } ,//
-                "body": JSON.stringify({
-                    "title": document.getElementById("inputTitle").value,
-                    "contents": document.getElementById("inputContents").value,//백엔드가 미리 정해 놓은대로 적으면 된다. 
-                    "writeDate": document.getElementById("inputDate").value,
-                    "user": document.getElementById("inputUser").value,
-                    //백엔드로 요청이 보내 진다. 
-                }) 
-                
-            })
-            .then((result)=>{
-                return result.json()
-            })
-            .then((result)=>{
-                if(result.succeed==true){
-                    location.href="/memoPage"//메모페이지로 이동 할 것이다. 
-                }else{
-                    alert("메모 추가 실패")
-                }
-            })
-        }
-
-
-        const memoImgSave=()=>{
-            //이미지 업로드 
             const form = new FormData();
             form.enctype = "multipart/form-data";
             const inputImg=document.getElementById("uploadFile").files[0]//이미지 자체를 넣기
             console.log(inputImg)
             form.append("img", inputImg);
         
-            fetch("/upload",{
+            fetch("/upload",{//이미지를 s3에 먼저 업로드 하고 
                 method: "POST",
                 headers: {
                 //"Content-Type": "multipart/form-data",
@@ -100,18 +61,40 @@
                 body: form
                 // body 엔 JS object 가 아닌 form 을 그대로 보낸다.
             })
-            .then((result)=>{
-                return result.json()
+            .then((response)=>{
+                return response.json()
             })
-            .then((result)=>{
-                if(result.succeed==true){
-                    //location.href="/memoPage"//메모페이지로 이동 할 것이다. 
-                }else{
-                    alert("img upload 실패")
-                }
+            .then((data)=>{
+              console.log(data.urlImg)
+              //s3에 저장된 이미지 경로를 얻어 와 메모와 함께 저장 한다. 
+              fetch("/memo",{//result 에 저장이 된다. 
+                    "method": "POST", //요청하는     제이쓴 키 값으로 되였있다. 
+                    "headers":{// 값을 여려가 들어 간다.
+                        "Content-Type":"application/json"
+                    } ,//
+                    "body": JSON.stringify({
+                        "title": document.getElementById("inputTitle").value,
+                        "contents": document.getElementById("inputContents").value,//백엔드가 미리 정해 놓은대로 적으면 된다. 
+                        "writeDate": document.getElementById("inputDate").value,
+                        "user": document.getElementById("inputUser").value,
+                        "imgUrl":data.urlImg
+                    })    
+                })
+                .then((result)=>{
+                    return result.json()
+                })
+                .then((result)=>{
+                    if(result.succeed==true){
+                        location.href="/memoPage"//메모페이지로 이동 할 것이다. 
+                    }else{
+                        alert("메모 추가 실패")
+                    }
+                })
+            
             })
+            
         }
-        
+
     </script>
 </body>
 </html>
