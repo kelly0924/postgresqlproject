@@ -27,8 +27,8 @@
                     newContentDiv.setAttribute("id",cnt)
                     resutlDiv.appendChild(newContentDiv)
                     newContentDiv.innerHTML=data.rows[index].memotitle //제목
-                    newContentDiv.addEventListener("click", function(){viewMemo(this.id)})//제목을 클릭 했을 경우 
-                    console.log("메모 id", index,"번째",data.rows[index].memoid)
+                    newContentDiv.addEventListener("click", function(){viewMemo(data.rows[index].memoid)})//제목을 클릭 했을 경우 
+                    //console.log("메모 id", index,"번째",data.rows[index].memoid)
 
                     let newWriteDateDiv=document.createElement("div")
                     newWriteDateDiv.setAttribute("id",cnt)
