@@ -1,5 +1,5 @@
 const express=require("express")
-
+const cookieParser = require("cookie-parser");
 
 
 const app=express()//app은 experss를 객체로 만든것이 저장 된다. 실제로 사용할 것 
@@ -29,6 +29,9 @@ app.use("/logAPi",mongoApi)
 //upload file
 const uploadApi=require("./router/uploadApi")
 app.use("/upload",uploadApi)
+
+//쿠키 등록 해주기 -- > 등록 해주므로서  response request로 사용 가능
+app.use(cookieParser())
 
 app.listen(port,()=>{
     console.log(port + "번 포트에서 http통신을 시작!!")
