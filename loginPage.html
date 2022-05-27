@@ -15,11 +15,20 @@
 
         //토큰이 있는지를 먼저 봐야 한다. 
         window.onload=()=>{//자동 로그인 체크 jwt 토큰 인증   FE에서 발급된 토큰이 있는지 검사 해 본다. 
-            if (localStorage.getItem("loginToken")) {
+            const tokenCookie=document.cookie
+
+            const tokenArr=tokenCookie.split("=")
+            const tokenName=tokenArr[0]
+            const tokenValue=tokenArr[1]
+
+            // console.log(tokenName,tokenValue)
+            // console.log(tokenCookie.length)
+
+            if (tokenValue!=""){//쿠키가 존재 한다면 
                 fetch("/account/verify", {//이 토큰이 유효 한지 서버에게 보내줌
                     "method": "POST", //요청하는     제이쓴 키 값으로 되였있다. 
                     "headers":{// 값을 여려가 들어 간다.
-                        "auth":localStorage.getItem("loginToken")// 이 을 보내 준다.  --> 서버에선 verify api는 이 토큰이 자기가 발급한 토큰인지 를 보고 
+                        "auth": tokenValue // 이 을 보내 준다.  --> 서버에선 verify api는 이 토큰이 자기가 발급한 토큰인지 를 보고 
                         //사용 유 무를 알려 준다. 
                     }
                 })
@@ -29,12 +38,10 @@
                 .then((result)=>{//위에 것을 하고 나면 해달라 , 윗쪽 비동기가 끝나면 이 코드를 실행 시켜 달라 promiss
 
                     if(result.success == true){
-                        //token을 저장 해야 한다. 
-                        //스토리지 2개 cookie, locall storag
-                        alert("로그인 성공")
+                        alert("토큰 인증 성공")
                     }else{
                         alert(result.message)
-                        localStorage.removeItem("loginToken")//보내준 토큰이 잘 못 된 경우 삭제 해야 한다. 
+                        document.cookie = tokenName+"=; expires=Thu, 01 Jan 1970 00:00:00 UTC"//토큰이 잘 못 된 경우 삭제 저장한 쿠키도 같이 삭제 해준다. 
                     }
                 })
             }    
@@ -61,6 +68,10 @@
             })
             .then((result)=>{//위에 것을 하고 나면 해달라 , 윗쪽 비동기가 끝나면 이 코드를 실행 시켜 달라 promiss
                 if(result.sucess == true){
+
+                    //쿠키 생성 해서 token 저장
+                    document.cookie="logintoken=" + result.token 
+                    alert("로그인 성공")
                     location.href="/memoPage"
                 }else{
                     alert("로그인 실패")
@@ -72,6 +83,9 @@
         const memberJoinEvent = ()=>{
             location.href="/memberJoin"
         }
+
+
+
     </script>
 </body>
 </html>

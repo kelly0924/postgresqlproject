@@ -39,7 +39,6 @@ router.post("/",(req,res)=>{
             // console.log(row)
             if(row.length == 0){
             }else {
-                result.sucess=true
                 //토큰 생성
                 console.log("들어 오나")
                 const jwtToken=jwt.sign(
@@ -55,13 +54,15 @@ router.post("/",(req,res)=>{
                 )
             
                 result.token=jwtToken
-                console.log(result.sucess, "로그인")
+                result.sucess=true
+                // console.log(result.sucess, "로그인")
+                // console.log("token",result.token)
+                
                 //    // res.cookie('token', jwtToken); // 클라이언트에 쿠키로 전달
-                res.cookie('cookie', jwtToken, {//쿠키를 만든다는 것 자체는 로그인이 성공 한 다음 이다. 
-                    httpOnly: true,
+                // res.cookie('cookie', jwtToken, {//쿠키를 만든다는 것 자체는 로그인이 성공 한 다음 이다. 
+                //     httpOnly: true,
                 
-                })
-                
+                // })
 
             // 로고 남기기 
                 const apiName="login"//????
@@ -89,7 +90,7 @@ router.post("/",(req,res)=>{
         else {
             console.log(err)
         }
-       // res.send(result)// 값만 보내 줄것이다. 값을 보내  때는 send로 보내 준다.
+        res.send(result)// 값만 보내 줄것이다. 값을 보내  때는 send로 보내 준다.
         db.end()
     })
     //프론드에게 값을 반환
