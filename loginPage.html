@@ -15,8 +15,8 @@
 
         //토큰이 있는지를 먼저 봐야 한다. 
         window.onload=()=>{//자동 로그인 체크 jwt 토큰 인증   FE에서 발급된 토큰이 있는지 검사 해 본다. 
-            const tokenCookie=document.cookie
 
+            const tokenCookie=document.cookie  
             const tokenArr=tokenCookie.split("=")
             const tokenName=tokenArr[0]
             const tokenValue=tokenArr[1]
@@ -25,6 +25,7 @@
             // console.log(tokenCookie.length)
 
             if (tokenValue!=""){//쿠키가 존재 한다면 
+
                 fetch("/account/verify", {//이 토큰이 유효 한지 서버에게 보내줌
                     "method": "POST", //요청하는     제이쓴 키 값으로 되였있다. 
                     "headers":{// 값을 여려가 들어 간다.
@@ -40,7 +41,7 @@
                     if(result.success == true){
                         alert("토큰 인증 성공")
                     }else{
-                        alert(result.message)
+                        //alert(result.message)
                         document.cookie = tokenName+"=; expires=Thu, 01 Jan 1970 00:00:00 UTC"//토큰이 잘 못 된 경우 삭제 저장한 쿠키도 같이 삭제 해준다. 
                     }
                 })
@@ -58,19 +59,14 @@
                     "pw": document.getElementById("pwValue").value,//백엔드가 미리 정해 놓은대로 적으면 된다. 
                     //백엔드로 요청이 보내 진다. 
                 }) 
-                //body에 내가 넣고 시피은 값을 적어야 한다 그 위는 고정 값
-            })//첫, apiName, 객체
-            //JSON.stringify()  json은 문자로 바꿔서 보내 줘야 한다. 위쪽 내용은 프론트엔드가 필요한 정보이고 body에 내용이 
-            // 백엔드에 보내 진다. 
-            //실질적으로는 body만 보낸다.
+            })
             .then((result)=>{
                return result.json()//받아 온 것을 json으로 바꿔 준다. 애도 비동이 처리
             })
             .then((result)=>{//위에 것을 하고 나면 해달라 , 윗쪽 비동기가 끝나면 이 코드를 실행 시켜 달라 promiss
                 if(result.sucess == true){
-
                     //쿠키 생성 해서 token 저장
-                    document.cookie="logintoken=" + result.token 
+                   document.cookie="logintoken=" + result.token 
                     alert("로그인 성공")
                     location.href="/memoPage"
                 }else{

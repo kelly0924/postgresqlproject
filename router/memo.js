@@ -11,6 +11,20 @@ const AWS = require("aws-sdk");
 
 //메모 보여주는 api 
 router.get("/all",(req,res)=>{
+
+    //token이 유효 하면 아래 실행
+    //const publicToken=req.headers.auth//프론트엔드에서 보내준 token
+    // axios.post("http://localhost:8000/auth/verify", {
+    //         token:publicToken
+    //     })
+    //     .then(function(response){
+    //         console.log("token 인증을 한 axios",response.data)
+    //     })
+    //     .catch(function (error) {
+    //         console.log(error)
+    //     })
+
+
     const db = new Client(pgInit)
 
     db.connect((err) => {

@@ -19,8 +19,6 @@ app.use("/memo",memoApi)
 const comentApi=require("./router/coment")
 app.use("/coment",comentApi)
 
-
-
 //mongoDB
 
 const mongoApi=require("./dataBases/logApi")
@@ -32,6 +30,10 @@ app.use("/upload",uploadApi)
 
 //쿠키 등록 해주기 -- > 등록 해주므로서  response request로 사용 가능
 app.use(cookieParser())
+
+//토큰의 인증을 위한 api 
+const verifyApi=require("./router/auth")
+app.use("/verify",verifyApi) 
 
 app.listen(port,()=>{
     console.log(port + "번 포트에서 http통신을 시작!!")

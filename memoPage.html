@@ -15,35 +15,39 @@
     </main>
     <script>
 
+        const tokenCookie=document.cookie  
+        const tokenArr=tokenCookie.split("=")
+        const tokenValue=tokenArr[1]
+
         fetch("/memo/all")
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("메모 id",data.rows[0].memoid)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
-                let cnt=0;
-                for(let index=0; index<data.rows.length; index++){
-                    let resutlDiv=document.getElementById("mainDiv")
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("메모 id",data.rows[0].memoid)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  
+            let cnt=0;
+            for(let index=0; index<data.rows.length; index++){
+                let resutlDiv=document.getElementById("mainDiv")
 
-                    let newContentDiv=document.createElement("div")
-                    newContentDiv.setAttribute("id",cnt)
-                    resutlDiv.appendChild(newContentDiv)
-                    newContentDiv.innerHTML=data.rows[index].memotitle //제목
-                    newContentDiv.addEventListener("click", function(){viewMemo(data.rows[index].memoid)})//제목을 클릭 했을 경우 
-                    //console.log("메모 id", index,"번째",data.rows[index].memoid)
+                let newContentDiv=document.createElement("div")
+                newContentDiv.setAttribute("id",cnt)
+                resutlDiv.appendChild(newContentDiv)
+                newContentDiv.innerHTML=data.rows[index].memotitle //제목
+                newContentDiv.addEventListener("click", function(){viewMemo(data.rows[index].memoid)})//제목을 클릭 했을 경우 
+                //console.log("메모 id", index,"번째",data.rows[index].memoid)
 
-                    let newWriteDateDiv=document.createElement("div")
-                    newWriteDateDiv.setAttribute("id",cnt)
-                    resutlDiv.appendChild(newWriteDateDiv)
-                    newWriteDateDiv.innerHTML=data.rows[index].memodate
+                let newWriteDateDiv=document.createElement("div")
+                newWriteDateDiv.setAttribute("id",cnt)
+                resutlDiv.appendChild(newWriteDateDiv)
+                newWriteDateDiv.innerHTML=data.rows[index].memodate
 
-                    let newUserDiv=document.createElement("div")
-                    newUserDiv.setAttribute("id",cnt)
-                    resutlDiv.appendChild(newUserDiv)
-                    newUserDiv.innerHTML=data.rows[index].userid
-                    cnt=cnt+1
-                }
+                let newUserDiv=document.createElement("div")
+                newUserDiv.setAttribute("id",cnt)
+                resutlDiv.appendChild(newUserDiv)
+                newUserDiv.innerHTML=data.rows[index].userid
+                cnt=cnt+1
+            }
 
-            })// 백엔드에서 보내준 json 형태의 데이터
-     
+        })// 백엔드에서 보내준 json 형태의 데이터
+    
         
         const addMemoEvent=()=>{
             location.href="/addMemo"
