@@ -18,8 +18,15 @@
         const tokenCookie=document.cookie  
         const tokenArr=tokenCookie.split("=")
         const tokenValue=tokenArr[1]
+        console.log(tokenValue)
 
-        fetch("/memo/all")
+        fetch("/memo/all",{
+            "method": "POST", //요청하는     제이쓴 키 값으로 되였있다. 
+            "headers":{// 값을 여려가 들어 간다.
+                "auth": tokenValue // 이 을 보내 준다.  --> 서버에선 verify api는 이 토큰이 자기가 발급한 토큰인지 를 보고 
+                //사용 유 무를 알려 준다. 
+            }
+        })
         .then((response) => response.json())
         .then((data) => {
             console.log("메모 id",data.rows[0].memoid)//data는 백엔드에서 넘어 오는 json 배열로 담은 데이터이다.  

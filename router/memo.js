@@ -10,58 +10,59 @@ const upload = require("./upload")
 const AWS = require("aws-sdk");
 
 //메모 보여주는 api 
-router.get("/all",(req,res)=>{
-
-    //token이 유효 하면 아래 실행
-    //const publicToken=req.headers.auth//프론트엔드에서 보내준 token
-    // axios.post("http://localhost:8000/auth/verify", {
-    //         token:publicToken
-    //     })
-    //     .then(function(response){
-    //         console.log("token 인증을 한 axios",response.data)
-    //     })
-    //     .catch(function (error) {
-    //         console.log(error)
-    //     })
-
-
-    const db = new Client(pgInit)
-
-    db.connect((err) => {
-        if(err) {
-            console.log(err)
-        }
-    })
-    const sql="SELECT * FROM memoschema.memo"
-   
-    db.query(sql,(err,row) =>{
-        console.log("검사"+ err) 
-        if(err){
-            console.log(err)
-        }
-
-        //axios로 api 호출 하기 
-        const apiName="login"//????
-        const apiCallTime=getCurrentDate()
-        axios.post("http://localhost:8000/logAPi",{
-            userId:"if session userid",
-            name:apiName,
-            sendDate:row.rows,
-            time:apiCallTime
+router.post("/all",(req,res)=>{
+    //token이 유효 한지 검사 
+    const publicToken=req.headers.auth//프론트엔드에서 보내준 token
+    axios.post("http://localhost:8000/verify", {
+            token:publicToken
         })
         .then(function(response){
-            console.log("axios",response.data)
+            console.log("token 인증을 한 axios",response.data.success)
+            if(response.data.success == true){//FE에서 보내준 토큰이 유용할 경우 databases를 조회 하고 보내주기
+                //db 조회 하기 
+                const db = new Client(pgInit)
+                db.connect((err) => {
+                    if(err) {
+                        console.log(err)
+                    }
+                })
+                const sql="SELECT * FROM memoschema.memo"
+               
+                db.query(sql,(err,row) =>{
+                    console.log("검사"+ err) 
+                    if(err){
+                        console.log(err)
+                    }
+            
+                    //axios로 api 호출로 loging 남기기
+                    const apiName="memoAll"//????
+                    const apiCallTime=getCurrentDate()
+                    axios.post("http://localhost:8000/logAPi",{
+                        userId:"if session userid",
+                        name:apiName,
+                        sendDate:row.rows,
+                        time:apiCallTime
+                    })
+                    .then(function(response){
+                        console.log("axios",response.data)
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
+            
+                    db.end()
+                    res.send(row)// 값만 보내 줄것이다. 값을 보내  때는 send로 보내 준다.
+            
+                })
+
+            }else{
+                res.send(response.data.message)//토큰이 잘 못 된 경우 사용 자에게 토큰이 잘 못 된것을 알려 줘야 한다. 
+            }
+            
         })
         .catch(function (error) {
             console.log(error)
         })
-
-        db.end()
-        res.send(row)// 값만 보내 줄것이다. 값을 보내  때는 send로 보내 준다.
-
-    })
-    //프론드에게 값을 반환
-   //db.end() 위에 것랑 같이 돌아 가서 미리 끝나 버린다. 
 })
 
 //메모 추가 하기 
