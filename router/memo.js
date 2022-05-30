@@ -17,7 +17,7 @@ router.post("/all",(req,res)=>{
             token:publicToken
         })
         .then(function(response){
-            console.log("token 인증을 한 axios",response.data.success)
+            console.log("token 인증:",response.data.success)
             if(response.data.success == true){//FE에서 보내준 토큰이 유용할 경우 databases를 조회 하고 보내주기
                 //db 조회 하기 
                 const db = new Client(pgInit)
@@ -76,47 +76,59 @@ router.post("/", (req,res)=>{
     const imgurlValue=req.body.imgUrl
     console.log(imgurlValue)
 
-    const db = new Client(pgInit)
-    const result={
-        "succeed":false
-    }
- //디비 연결
-    db.connect((err)=>{
-        if(err){
-            console.log(err)
-        }
-    })
+    //token을 사용 인증 
+    const publicToken=req.headers.auth//프론트엔드에서 보내준 token
+    axios.post("http://localhost:8000/verify", {
+            token:publicToken
+        })
+        .then(function(response){
+            console.log("token 인증:",response.data.success)
+            if(response.data.success == true){//FE에서 보내준 토큰이 유용할 경우 databases를 조회 하고 보내주기
+                const db = new Client(pgInit)
+                const result={
+                    "succeed":false
+                }
+                //디비 연결
+                db.connect((err)=>{
+                    if(err){
+                        console.log(err)
+                    }
+                })
+                const sql="INSERT INTO memoschema.memo (userid,memotitle,memocontents,imgurl,memodate) VALUES($1,$2,$3,$4,$5)"
+                const valuses=[userValue,titleValue,contentsValue,imgurlValue,dateValue]
+                db.query(sql,valuses,(err,row) =>{
+                    if(!err){
+                        result.succeed=true//프론트 엔드에게 성공 여부를 알려 준다.
 
-    
-    const sql="INSERT INTO memoschema.memo (userid,memotitle,memocontents,imgurl,memodate) VALUES($1,$2,$3,$4,$5)"
-    const valuses=[userValue,titleValue,contentsValue,imgurlValue,dateValue]
-    db.query(sql,valuses,(err,row) =>{
-        if(!err){
-
-            result.succeed=true//프론트 엔드에게 성공 여부를 알려 준다.
-
-           //axios로 api 호출 하기 
-           const apiName="login"//????
-           const apiCallTime=getCurrentDate()
-           axios.post("http://localhost:8000/logAPi",{
-            userId:userValue,
-            name:apiName,
-            sendDate:row.rows,
-            time:apiCallTime
-            })
-            .then(function(response){
-                console.log("axios",response.data)
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
-        }else{
-            console.log(err)
-        }
-
-       res.send(result)
-       db.end()
-    })
+                        //loging 남기기 api axios
+                        const apiName="login"//????
+                        const apiCallTime=getCurrentDate()
+                        axios.post("http://localhost:8000/logAPi",{
+                        userId:userValue,
+                        name:apiName,
+                        sendDate:row.rows,
+                        time:apiCallTime
+                        })
+                        .then(function(response){
+                            console.log("axios",response.data)
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                        })
+                    }else{
+                        console.log(err)
+                    }
+            
+                   res.send(result)
+                   db.end()
+                })
+            }else{
+                res.send(response.data.message)//토큰이 잘 못 된 경우 사용 자에게 토큰이 잘 못 된것을 알려 줘야 한다. 
+            }
+        })
+        .catch(function (error) {
+            console.log(error)
+        })
 })
 
 const getCurrentDate=()=>{

@@ -30,6 +30,12 @@
     </main>
     
     <script>
+
+        const tokenCookie=document.cookie  
+        const tokenArr=tokenCookie.split("=")
+        const tokenValue=tokenArr[1]
+
+
         const readURL=(input)=>{//화면에 선택한 이미지 출력 하기 
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -70,7 +76,8 @@
               fetch("/memo",{//result 에 저장이 된다. 
                     "method": "POST", //요청하는     제이쓴 키 값으로 되였있다. 
                     "headers":{// 값을 여려가 들어 간다.
-                        "Content-Type":"application/json"
+                        "Content-Type":"application/json",
+                        "auth": tokenValue
                     } ,//
                     "body": JSON.stringify({
                         "title": document.getElementById("inputTitle").value,
