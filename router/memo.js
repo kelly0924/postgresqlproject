@@ -4,6 +4,7 @@ const {Client}=require("pg")//pg 는 Client 로 이름 고정 여러개 하기 �
 const pgInit=require("./postgreSqlDb")//데이터 베이스를 사용하기 위해서 
 const moment = require("moment")
 const axios=require("axios")
+const logFuntion=require("./logFun")
 
 //  이미지를 업로드 하기 위한 것
 const upload = require("./upload")
@@ -33,22 +34,28 @@ router.post("/all",(req,res)=>{
                     if(err){
                         console.log(err)
                     }
-            
-                    //axios로 api 호출로 loging 남기기
-                    const apiName="memoAll"//????
-                    const apiCallTime=getCurrentDate()
-                    axios.post("http://localhost:8000/logAPi",{
-                        userId:"if session userid",
-                        name:apiName,
-                        sendDate:row.rows,
-                        time:apiCallTime
-                    })
-                    .then(function(response){
-                        console.log("axios",response.data)
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                    })
+                     //loggin 남기기
+                     const apiName=req.url
+                     const reqHost=req.headers.host
+                     const apiCallTime=moment(new Date().getTime())
+                     //function으로 호출 하기 
+                    logFuntion("userid",apiName,reqHost,row,apiCallTime)  
+
+                    // //axios로 api 호출로 loging 남기기
+                    // const apiName="memoAll"//????
+                    // const apiCallTime=getCurrentDate()
+                    // axios.post("http://localhost:8000/logAPi",{
+                    //     userId:"if session userid",
+                    //     name:apiName,
+                    //     sendDate:row.rows,
+                    //     time:apiCallTime
+                    // })
+                    // .then(function(response){
+                    //     console.log("axios",response.data)
+                    // })
+                    // .catch(function (error) {
+                    //     console.log(error)
+                    // })
             
                     db.end()
                     res.send(row)// 값만 보내 줄것이다. 값을 보내  때는 send로 보내 준다.
@@ -100,25 +107,31 @@ router.post("/", (req,res)=>{
                     if(!err){
                         result.succeed=true//프론트 엔드에게 성공 여부를 알려 준다.
 
+                         //loggin 남기기
+                         const apiName=req.url
+                         const reqHost=req.headers.host
+                         const apiCallTime=moment(new Date().getTime())
+                         //function으로 호출 하기 
+                         logFuntion("userid",apiName,reqHost,row,apiCallTime)  
+
                         //loging 남기기 api axios
-                        const apiName="login"//????
-                        const apiCallTime=getCurrentDate()
-                        axios.post("http://localhost:8000/logAPi",{
-                        userId:userValue,
-                        name:apiName,
-                        sendDate:row.rows,
-                        time:apiCallTime
-                        })
-                        .then(function(response){
-                            console.log("axios",response.data)
-                        })
-                        .catch(function (error) {
-                            console.log(error)
-                        })
+                        // const apiName="login"//????
+                        // const apiCallTime=getCurrentDate()
+                        // axios.post("http://localhost:8000/logAPi",{
+                        // userId:userValue,
+                        // name:apiName,
+                        // sendDate:row.rows,
+                        // time:apiCallTime
+                        // })
+                        // .then(function(response){
+                        //     console.log("axios",response.data)
+                        // })
+                        // .catch(function (error) {
+                        //     console.log(error)
+                        // })
                     }else{
                         console.log(err)
                     }
-            
                    res.send(result)
                    db.end()
                 })

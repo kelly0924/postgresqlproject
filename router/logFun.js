@@ -5,7 +5,7 @@ const path=require("path")// 파일 경로를 조합 해주는 패케지 이다.
 const MongoClient = require('mongodb').MongoClient
 const url = "mongodb://localhost:27017/";
 
-const logFun=(userid,apiName,data, calTime)=>{
+const logFun=(userid,apiName,reqHost, data, calTime)=>{
     console.log(userid,calTime)
     MongoClient.connect(url, function(err, db) {
             if (err){
@@ -15,6 +15,7 @@ const logFun=(userid,apiName,data, calTime)=>{
             const myobj = { 
                 usid: userid,
                 apiname: apiName,
+                reqhost:reqHost,
                 senddata:data, 
                 apicalltime: calTime
             }//삽입일  내용

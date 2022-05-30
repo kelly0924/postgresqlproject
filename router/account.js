@@ -12,7 +12,9 @@ const secretKey="qwwdfdlfdjfkafhaeseongjhioerhhwadnelasdjefdofdnjflgdjf"
 
 router.post("/",(req,res)=>{
     //사용자로 부터 입력 받은 값
-
+    console.log("로그인 요청 정보 확인",req.headers.host)
+    console.log("로그인 요청 정보 확인",req.url)
+  //사용자로 부터 입력 받은 값
     const idValue= req.body.id
     const pwValue= req.body.pw
 
@@ -55,35 +57,27 @@ router.post("/",(req,res)=>{
             
                 result.token=jwtToken
                 result.sucess=true
-                // console.log(result.sucess, "로그인")
-                // console.log("token",result.token)
-                
-                //    // res.cookie('token', jwtToken); // 클라이언트에 쿠키로 전달
-                // res.cookie('cookie', jwtToken, {//쿠키를 만든다는 것 자체는 로그인이 성공 한 다음 이다. 
-                //     httpOnly: true,
-                
-                // })
-
             // 로고 남기기 
-                const apiName="login"//????
-                const apiCallTime=getCurrentDate()
-
-                //function으로 호출 하기 
-                // logFuntion(idValue,apiName,row,apiCallTime)
+            const apiName=req.url
+            const reqHost=req.headers.host
+            const apiCallTime=moment(new Date().getTime())
+            //function으로 호출 하기 
+            logFuntion(idValue,apiName,reqHost,row,apiCallTime)    
 
                 //axios로 api 호출 하기 
-                axios.post("http://localhost:8000/logAPi",{
-                    userId:idValue,
-                    name:apiName,
-                    sendDate:row,
-                    time:apiCallTime
-                })
-                .then(function(response){
-                    console.log("axios",response.data)
-                })
-                .catch(function (error) {
-                    console.log(error)
-                })
+                // axios.post("http://localhost:8000/logAPi",{
+                //     userId:idValue,
+                //     name:apiName,
+                //     reqhost:req.headers.host,
+                //     sendDate:row,
+                //     time:apiCallTime
+                // })
+                // .then(function(response){
+                //     console.log("axios",response.data)
+                // })
+                // .catch(function (error) {
+                //     console.log(error)
+                // })
 
             }
         }
@@ -103,6 +97,8 @@ router.post("/signUp",(req,res)=>{
     const idValue=req.body.id
     const pwValue=req.body.pw
     const signDate=req.body.signupDate
+
+    console.log("로그인 요청 정보 확인",req.url)
 
     const db = new Client(pgInit)
 
@@ -128,25 +124,25 @@ router.post("/signUp",(req,res)=>{
        
        
        //loggin 남기기
-        const apiName="signUp"//????
+        const apiName=req.url
+        const reqHost=req.headers.host
         const apiCallTime=moment(new Date().getTime())
-
-        //function 으로 하기 
-        //logFuntion(idValue,apiName,rows,apiCallTime)
+        //function으로 호출 하기 
+        logFuntion(idValue,apiName,reqHost,rows,apiCallTime)
 
         //axios api 로 호출 하기 
-        axios.post("http://localhost:8000/logAPi",{
-                    userId:idValue,
-                    name:apiName,
-                    sendDate:row,
-                    time:apiCallTime
-                })
-                .then(function(response){
-                    console.log("axios",response.data)
-                })
-                .catch(function (error) {
-                    console.log(error)
-                })
+        // axios.post("http://localhost:8000/logAPi",{
+        //             userId:idValue,
+        //             name:apiName,
+        //             sendDate:rows,
+        //             time:apiCallTime
+        //         })
+        //         .then(function(response){
+        //             console.log("axios",response.data)
+        //         })
+        //         .catch(function (error) {
+        //             console.log(error)
+        //         })
 
         res.send(result)
        db.end()
@@ -155,8 +151,7 @@ router.post("/signUp",(req,res)=>{
 })
 
 
-//서버에서 토큰의 유효성을 검증 해주는 API 이다. 
-
+//서버에서 토큰의 유효성을 검증 해주는 API 이다. 로그인을 하기 전에 token을 검증 해주는 api 
 router.post("/verify",(req,res)=>{
     const token=req.headers.auth//프론트엔드에서 보내준 token
     const result={

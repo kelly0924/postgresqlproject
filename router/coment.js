@@ -4,6 +4,7 @@ const {Client}=require("pg")//pg 는 Client 로 이름 고정 여러개 하기 �
 const pgInit=require("./postgreSqlDb")//데이터 베이스를 사용하기 위해서 
 const moment = require("moment")
 const axios=require("axios")
+const logFuntion=require("./logFun")
 
 router.post("/all",(req,res)=>{
     console.log("호출")
@@ -39,6 +40,12 @@ router.post("/all",(req,res)=>{
                     console.log(err)
                 }
                 result.contents=data
+                //loggin 남기기
+                const apiName=req.url
+                const reqHost=req.headers.host
+                const apiCallTime=moment(new Date().getTime())
+                //function으로 호출 하기 
+                logFuntion("userid",apiName,reqHost,data,apiCallTime)
             })
 
             db.query(sqlcoment,(err,cdata) =>{
@@ -47,27 +54,15 @@ router.post("/all",(req,res)=>{
                     console.log(err)
                 }
                 result.coment=cdata
+               //loggin 남기기
+                const apiName=req.url
+                const reqHost=req.headers.host
+                const apiCallTime=moment(new Date().getTime())
+                //function으로 호출 하기 
+                logFuntion("userid",apiName,reqHost,cdata,apiCallTime)  
                 db.end()
                 res.send(result)// 값만 보내 줄것이다. 값을 보내  때는 send로 보내 준다.
-            })
-
-            //axios로 api 호출 하기 
-            const apiName="coment"//????
-            const apiCallTime=getCurrentDate()
-            const idValue="coment"
-
-            axios.post("http://localhost:8000/logAPi",{
-                userId:idValue,
-                name:apiName,
-                sendDate:result,
-                time:apiCallTime
-            })
-            .then(function(response){
-                console.log("axios",response.data)
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
+            })            
         }else{
             res.send(response.data.me)
         }
