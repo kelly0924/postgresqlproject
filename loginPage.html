@@ -24,11 +24,7 @@
                     "pw": document.getElementById("pwValue").value,//백엔드가 미리 정해 놓은대로 적으면 된다. 
                     //백엔드로 요청이 보내 진다. 
                 }) 
-                //body에 내가 넣고 시피은 값을 적어야 한다 그 위는 고정 값
-            })//첫, apiName, 객체
-            //JSON.stringify()  json은 문자로 바꿔서 보내 줘야 한다. 위쪽 내용은 프론트엔드가 필요한 정보이고 body에 내용이 
-            // 백엔드에 보내 진다. 
-            //실질적으로는 body만 보낸다.
+            })
             .then((result)=>{
                return result.json()//받아 온 것을 json으로 바꿔 준다. 애도 비동이 처리
             })

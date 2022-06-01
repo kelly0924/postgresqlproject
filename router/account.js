@@ -10,6 +10,7 @@ router.post("/",(req,res)=>{
     //프론트엔드로 부터 받아온 값
     const idValue= req.body.id
     const pwValue= req.body.pw
+    const reqHost=req.headers.host
     //프론트 엔드로 보내 줄값 json으로 받았으니까 json으로 보내 줄것이다. 
     const db = new Client(pgInit)
     // console.log(moment(new Date().getTime()))
@@ -33,6 +34,12 @@ router.post("/",(req,res)=>{
             // console.log(row)
             if(row.length == 0){
             }else {
+
+                //세션 생성
+                req.session.userid=idValue
+                req.session.userpw=pwValue 
+                req.session.userip=reqHost
+                
                 result.sucess=true
                 const apiName="login"//????
                 const apiCallTime=getCurrentDate()
