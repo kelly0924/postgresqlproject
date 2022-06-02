@@ -36,25 +36,25 @@ router.post("/",(req,res)=>{
             if(row.length == 0){
             }else {
 
-                if(session.req.user){//만약 세션이 존재 한다면 
-                    result.message="세션이 존재!"
-                    //세션 삭제
-                    req.destroy(function(err){
-                        console.log("세션 삭제")
-                    })
-                }else{ 
-                    //세션 생성
-                    req.session.user={
-                        "userid":idValue,
-                        "userpw": pwValue,
-                        "userHost":reqHost
-                    }        
-                    console.log(req.session)
-                    result.sucess=true
-                    result.sessionSuccess=true
-                    result.message="세션 생성"
-                }
+             console.log(req)
+             
+             if(req.sessionID != ""){//세션이 존재 한다. 
+                console.log(req.session.user)
 
+             }else{
+                // //세션 생성
+                req.session.user={
+                    "userid":idValue,
+                    "userpw": pwValue,
+                    "userHost":reqHost
+                }        
+                console.log(req.session)
+
+                result.sucess=true
+                result.sessionSuccess=true
+                result.message="세션 생성"
+            
+            }
                 
                 const apiName=req.url
                 const apiCallTime=getCurrentDate()
