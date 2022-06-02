@@ -5,18 +5,20 @@ const {Client}=require("pg")//pg 는 Client 로 이름 고정 여러개 하기 �
 const logFuntion=require("./logFun")
 const moment = require("moment")
 const axios=require("axios")
+const session = require('express-session')
 
 router.post("/",(req,res)=>{
     //프론트엔드로 부터 받아온 값
     const idValue= req.body.id
     const pwValue= req.body.pw
     const reqHost=req.headers.host
-    //프론트 엔드로 보내 줄값 json으로 받았으니까 json으로 보내 줄것이다. 
+    console.log(idValue,"id사용자로 입력 받은")
+    //디비 연결
     const db = new Client(pgInit)
-    // console.log(moment(new Date().getTime()))
-    //console.log(req.hostname);
     const result ={
-        "sucess":false
+        "sucess":false,
+        "sessionSuccess":false,
+        "message":""
     }
     db.connect((err) => {
         if(err) {
@@ -25,23 +27,36 @@ router.post("/",(req,res)=>{
     })
     const sql="SELECT * FROM  memoschema.user WHERE userid=$1 and userpw=$2"
     const values=[idValue,pwValue]
-    // console.log(values)
 
     db.query(sql,values,(err,data) =>{
         console.log("검사"+ err) 
         if(!err){
             const row=data.rows;
-            // console.log(row)
+            console.log(row)
             if(row.length == 0){
             }else {
 
-                //세션 생성
-                req.session.userid=idValue
-                req.session.userpw=pwValue 
-                req.session.userip=reqHost
+                if(session.req.user){//만약 세션이 존재 한다면 
+                    result.message="세션이 존재!"
+                    //세션 삭제
+                    req.destroy(function(err){
+                        console.log("세션 삭제")
+                    })
+                }else{ 
+                    //세션 생성
+                    req.session.user={
+                        "userid":idValue,
+                        "userpw": pwValue,
+                        "userHost":reqHost
+                    }        
+                    console.log(req.session)
+                    result.sucess=true
+                    result.sessionSuccess=true
+                    result.message="세션 생성"
+                }
+
                 
-                result.sucess=true
-                const apiName="login"//????
+                const apiName=req.url
                 const apiCallTime=getCurrentDate()
 
                 //function으로 호출 하기 
