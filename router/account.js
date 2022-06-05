@@ -7,22 +7,23 @@ const moment = require("moment")
 const axios=require("axios")
 const cookie = require("cookie")//쿠키 사용
 const jwt=require("jsonwebtoken")//jwt token 사용
+const redis=require("redis").createClient()//redis를 사용하기 위한 import
 
 const secretKey="qwwdfdlfdjfkafhaeseongjhioerhhwadnelasdjefdofdnjflgdjf"
+const redisKey="userCount"//redis를 위한 키
 
-router.post("/",(req,res)=>{
-    //사용자로 부터 입력 받은 값
-    console.log("로그인 요청 정보 확인",req.headers.host)
-    console.log("로그인 요청 정보 확인",req.url)
+router.post("/",async(req,res)=>{
   //사용자로 부터 입력 받은 값
     const idValue= req.body.id
     const pwValue= req.body.pw
+    const userCnt=0//사용자 카운트
 
     //프론트 엔드로 보내 줄값 json으로 받았으니까 json으로 보내 줄것이다. 
     const result ={//프론트 엔드에게 보내 줄 값, 로그인 성공 여부, 발급된 토큰, 토큰 발급 도중 에로가 나면 에로 메세지
         "sucess":false,
         "token":"",
-        "message": null
+        "message": null,
+        "redisSuccess":false//로그인 한 회원수 출력 
     }
 
     //db 연결
@@ -46,7 +47,7 @@ router.post("/",(req,res)=>{
                 const jwtToken=jwt.sign(
                     {
                         "id":idValue,
-                        "pw":pwValue
+                        "pw":pwValue//q
                     },
                     secretKey,
                     {
@@ -54,41 +55,38 @@ router.post("/",(req,res)=>{
                         "expiresIn":"1m" //토큰 완료 시간
                     }
                 )
-            
                 result.token=jwtToken
                 result.sucess=true
-            // 로고 남기기 
-            const apiName=req.url
-            const reqHost=req.headers.host
-            const apiCallTime=moment(new Date().getTime())
-            //function으로 호출 하기 
-            logFuntion(idValue,apiName,reqHost,row,apiCallTime)    
 
-                //axios로 api 호출 하기 
-                // axios.post("http://localhost:8000/logAPi",{
-                //     userId:idValue,
-                //     name:apiName,
-                //     reqhost:req.headers.host,
-                //     sendDate:row,
-                //     time:apiCallTime
-                // })
-                // .then(function(response){
-                //     console.log("axios",response.data)
-                // })
-                // .catch(function (error) {
-                //     console.log(error)
-                // })
+                //redis
+                try{
+                    //redis 연결
+                    await redis.connect()
+                    //
+                    //
+                    await redis.disconnect()//연결된 redis 연결 끊기 
+
+                }catch(err){
+                    console.log(err)
+                    res.send(result)
+                }
+
+
+                // 로고 남기기 
+                const apiName=req.url
+                const reqHost=req.headers.host
+                const apiCallTime=moment(new Date().getTime())
+                //function으로 호출 하기 
+                logFuntion(idValue,apiName,reqHost,row,apiCallTime)    
 
             }
         }
         else {
             console.log(err)
         }
-        res.send(result)// 값만 보내 줄것이다. 값을 보내  때는 send로 보내 준다.
         db.end()
+        res.send(result)// 값만 보내 줄것이다. 값을 보내  때는 send로 보내 준다.
     })
-    //프론드에게 값을 반환
-   //db.end() 위에 것랑 같이 돌아 가서 미리 끝나 버린다. 
 
 })
 //회원 가입

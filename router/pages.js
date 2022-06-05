@@ -54,6 +54,10 @@ router.get("/memoPage",(req,res)=>{
 
     logFuntion(idValue,apiName,row,apiCallTime)
 
+    //token 인증을 해준다. --> 만약 인증이 실패 하면 -- > 다시 하게 
+    // token 모듈을 만들어서 여기 호출 해서 
+    //아예 페이지 들어 오는 것 자체도 위험 하다. 
+    
     res.sendFile(path.join(__dirname,"../memoPage.html"))
 
     
