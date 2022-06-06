@@ -8,6 +8,7 @@ const axios=require("axios")
 const cookie = require("cookie")//쿠키 사용
 const jwt=require("jsonwebtoken")//jwt token 사용
 const redis=require("redis").createClient()//redis를 사용하기 위한 import
+const session = require('express-session')
 
 const secretKey="qwwdfdlfdjfkafhaeseongjhioerhhwadnelasdjefdofdnjflgdjf"
 const redisKey="userCount"//redis를 위한 키
@@ -23,9 +24,10 @@ router.post("/",async(req,res)=>{
         "sucess":false,
         "token":"",
         "message": null,
-        "redisSuccess":false//로그인 한 회원수 출력 
-    }
-
+        "redisSuccess":false
+    }//로그인 한 회원수 출력 
+    const reqHost=req.headers.host
+    console.log(idValue,"id사용자로 입력 받은")
     //db 연결
     const db = new Client(pgInit)
     db.connect((err) => {
@@ -35,11 +37,12 @@ router.post("/",async(req,res)=>{
     })
     const sql="SELECT * FROM  memoschema.user WHERE userid=$1 and userpw=$2"
     const values=[idValue,pwValue]
+
     db.query(sql,values,(err,data) =>{
         console.log("검사"+ err) 
         if(!err){
             const row=data.rows;
-            // console.log(row)
+            console.log(row)
             if(row.length == 0){
             }else {
                 //토큰 생성
@@ -58,7 +61,26 @@ router.post("/",async(req,res)=>{
                 result.token=jwtToken
                 result.sucess=true
 
-                //redis
+             console.log(req)
+             
+             if(req.sessionID != ""){//세션이 존재 한다. 
+                console.log(req.session.user)
+
+             }else{
+                // //세션 생성
+                req.session.user={
+                    "userid":idValue,
+                    "userpw": pwValue,
+                    "userHost":reqHost
+                }        
+                console.log(req.session)
+
+                result.sucess=true
+                result.sessionSuccess=true
+                result.message="세션 생성"
+            
+            }
+             //redis
                 try{
                     //redis 연결
                     await redis.connect()
