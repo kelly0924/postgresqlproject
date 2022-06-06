@@ -6,7 +6,6 @@ const MongoClient = require('mongodb').MongoClient
 const url = "mongodb://localhost:27017/";
 
 const logFun=(userid,apiName,reqHost, data, calTime)=>{
-    console.log(userid,calTime)
     MongoClient.connect(url, function(err, db) {
             if (err){
                 console.log(err)
