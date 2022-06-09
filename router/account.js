@@ -10,7 +10,7 @@ const jwt=require("jsonwebtoken")//jwt token 사용
 const redis=require("redis").createClient()//redis를 사용하기 위한 import
 
 const secretKey="qwwdfdlfdjfkafhaeseongjhioerhhwadnelasdjefdofdnjflgdjf"
-
+const redisKey="loginCount"
 
 // router.post("/",async(req,res)=>{
 //   //사용자로 부터 입력 받은 값
@@ -154,7 +154,7 @@ const secretKey="qwwdfdlfdjfkafhaeseongjhioerhhwadnelasdjefdofdnjflgdjf"
 // })
 
 
-router.post("/",async(req,res)=>{
+router.post("/",async(req,res)=>{//로그인 Api
     //사용자로 부터 입력 받은 값
     const idValue= req.body.id
     const pwValue= req.body.pw
@@ -201,33 +201,20 @@ router.post("/",async(req,res)=>{
     try{
         //redis 연결 
         await redis.connect()
+        //login 한 사용자 수를 저장 하기 위한 redis --> 중복 횟수 중가 안됨
         const usCnt=await redis.sMembers("userCount")
-        const koreatime = new Date().addHours(9)
-        console.log("한국시간",nd)
-        const koreaMidnight = new Date().setTime(23,59,59)
-        
-        console.log(nd)
-        if(usCnt == null){
-            await redis.sAdd("userCount",idValue,{
-                EX:nd
-            })//중복 불가 
-       
-        }else{
-            await redis.sAdd("userCount",idValue,{
-                EXAT:nd
-            })//중복 불가 
-        }
-        // await redis.expire("userCount",24*60*60)
-        // await redis.expire(redisKey,2)//값을 조작하거나 추가 하거나 할때 expire시간을 해줘야 한다. 
-      
-        console.log(usCnt.length)//당일 로그인한 회원수 
-    
-        //const redisvalue=await redis.get(redisKey)
-        //console.log("레디스 값",redisvalue)
-     
+        await redis.sAdd("userCount",idValue)//중복 불가 
+        result.viewuser=usCnt.length// 로그인한  회원수 
+
+        //로그인 한 수 -> 한명이 하루에 여러번 가능 중복 가능
+        const loginCounter= await redis.get(redisKey)
+       if(loginCounter == null){//만약 처음 로그인을 했다면 
+           await redis.set(redisKey,1)// 새로운 redis를 만들어 준다. 값은 1로 
+       }else{
+           await redis.set(redisKey,parseInt(loginCounter)+1)// 사용자가 1번이상의 로그인 일경우 이전에 값에 +1을 증가 한다. 
+       }
 
         await redis.disconnect()//연결된 redis 연결 끊기 
-       result.viewuser=usCnt.length
 
     }catch(err){
         console.log("reids:",err)
@@ -245,92 +232,92 @@ router.post("/",async(req,res)=>{
     res.send(result)// 값만 보내 줄것이다. 값을 보내  때는 send로 보내 준다.
 })
     
-  //회원 가입
-  
-  router.post("/signUp",(req,res)=>{
-      const idValue=req.body.id
-      const pwValue=req.body.pw
-      const signDate=req.body.signupDate
-  
-      console.log("로그인 요청 정보 확인",req.url)
-  
-      const db = new Client(pgInit)
-  
-      console.log(idValue,pwValue,signDate)
-      const result={
-          "succeed":false
-      }
-  
-      db.connect((err)=>{
-          if(err){
-              console.log(err)
-          }
-      })
-      const sql="INSERT INTO memoschema.user (userid,userpw,signupdate) VALUES($1,$2,$3)"
-      const valuses=[idValue,pwValue,signDate]
-      db.query(sql,valuses,(err,rows) =>{
-          if(!err){
-              result.succeed=true
-              console.log(rows)
-          }else{
-              console.log(err)
-          }
-         
-         
-         //loggin 남기기
-          const apiName=req.url
-          const reqHost=req.headers.host
-          const apiCallTime=moment(new Date().getTime())
-          //function으로 호출 하기 
-          logFuntion(idValue,apiName,reqHost,rows,apiCallTime)
-  
-          //axios api 로 호출 하기 
-          // axios.post("http://localhost:8000/logAPi",{
-          //             userId:idValue,
-          //             name:apiName,
-          //             sendDate:rows,
-          //             time:apiCallTime
-          //         })
-          //         .then(function(response){
-          //             console.log("axios",response.data)
-          //         })
-          //         .catch(function (error) {
-          //             console.log(error)
-          //         })
-  
-          res.send(result)
-         db.end()
-      })
-     
-  })
-  
+//회원 가입
+
+router.post("/signUp",(req,res)=>{
+    const idValue=req.body.id
+    const pwValue=req.body.pw
+    const signDate=req.body.signupDate
+
+    console.log("로그인 요청 정보 확인",req.url)
+
+    const db = new Client(pgInit)
+
+    console.log(idValue,pwValue,signDate)
+    const result={
+        "succeed":false
+    }
+
+    db.connect((err)=>{
+        if(err){
+            console.log(err)
+        }
+    })
+    const sql="INSERT INTO memoschema.user (userid,userpw,signupdate) VALUES($1,$2,$3)"
+    const valuses=[idValue,pwValue,signDate]
+    db.query(sql,valuses,(err,rows) =>{
+        if(!err){
+            result.succeed=true
+            console.log(rows)
+        }else{
+            console.log(err)
+        }
+        
+        
+        //loggin 남기기
+        const apiName=req.url
+        const reqHost=req.headers.host
+        const apiCallTime=moment(new Date().getTime())
+        //function으로 호출 하기 
+        logFuntion(idValue,apiName,reqHost,rows,apiCallTime)
+
+        //axios api 로 호출 하기 
+        // axios.post("http://localhost:8000/logAPi",{
+        //             userId:idValue,
+        //             name:apiName,
+        //             sendDate:rows,
+        //             time:apiCallTime
+        //         })
+        //         .then(function(response){
+        //             console.log("axios",response.data)
+        //         })
+        //         .catch(function (error) {
+        //             console.log(error)
+        //         })
+
+        res.send(result)
+        db.end()
+    })
+    
+})
+
 
 //서버에서 토큰의 유효성을 검증 해주는 API 이다. 로그인을 하기 전에 token을 검증 해주는 api 
 router.post("/verify",(req,res)=>{
-    const token=req.headers.auth//프론트엔드에서 보내준 token
-    const result={
-        "success":false,
-        "message":null
-    }
-    try{
-        jwt.verify(token,secretKey)//서버가 가지고 있는 secretKey로 검증한다.
-        result.success=true
-        res.send(result)
-    }catch(e){
-        result.message="토큰이 잘못 됬음"
-        res.send(result)
-    }
+const token=req.headers.auth//프론트엔드에서 보내준 token
+const result={
+    "success":false,
+    "message":null
+}
+try{
+    jwt.verify(token,secretKey)//서버가 가지고 있는 secretKey로 검증한다.
+    result.success=true
+    res.send(result)
+}catch(e){
+    result.message="토큰이 잘못 됬음"
+    res.send(result)
+}
 })
 
 const getCurrentDate=()=>{
-    var date = new Date();
-    var year = date.getFullYear();
-    var month = date.getMonth();
-    var today = date.getDate();
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var seconds = date.getSeconds();
-    return new Date(Date.UTC(year, month, today, hours, minutes, seconds));
+var date = new Date();
+var year = date.getFullYear();
+var month = date.getMonth();
+var today = date.getDate();
+var hours = date.getHours();
+var minutes = date.getMinutes();
+var seconds = date.getSeconds();
+return new Date(Date.UTC(year, month, today, hours, minutes, seconds));
 }
 
 module.exports=router//
