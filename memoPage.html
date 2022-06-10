@@ -8,6 +8,11 @@
 <body>
     <header>
      <div><input type="button" value="추가" onclick="addMemoEvent()"></div>
+     <div>
+        <input type="text" id="inputText" > 
+        <input type="button" value="검색" onclick="searchEvent()">
+    
+    </div>
 
     </header>
     <main>
@@ -64,6 +69,32 @@
             console.log("클릭된 메모 아이디 출력",index)
            location.href = "/coment?index="+index
         }
+
+        //검색어 입력 시 redis 들어 가기 
+        const searchEvent=()=>{
+
+            const tmpText=document.getElementById("inputText").value
+
+            console.log(tmpText)
+
+            fetch("/search",{
+                "method":"POST",
+                "headers":{
+                    "Content-Type":"application/json"
+                },
+                "body":JSON.stringify({
+                    "userInput":tmpText
+                })
+            })
+            .then((res=>res.json()))
+            .then((result)=>{
+                if(result.success){
+                    console.log("검색어 찾기 저장")
+                }
+            })
+        }
+
+
     </script>
 </body>
 </html>
