@@ -3,13 +3,16 @@ const path=require("path")//파일 경로를 조합 해주는 패케지 이다. 
 const redis=require("redis").createClient()
 const redisKey="searcText"
 
+let scoreValue=0
+
 router.post("/",async(req,res)=>{//검색어 넣기 
 
     const searchWord=req.body.userInput
-    const scoreValue=nowtimer()// 점수를 현재 시간 api 를 호출한 식간으로 할것이다. 
+    //const scoreValue=nowtimer()// 점수를 현재 시간 api 를 호출한 식간으로 할것이다. 
+    scoreValue=scoreValue+1//api 호출 될 때 마다 증가 
 
     const result = {
-        "success": false,
+        "success": false
     }
 
     console.log(searchWord, scoreValue)
@@ -20,10 +23,10 @@ router.post("/",async(req,res)=>{//검색어 넣기
           score: scoreValue,
           value: searchWord
         }])
-
+       await redis.expire("searcText",12*60*60)//값을 조작하거나 추가 하거나 할때 expire시간을 해줘야 한다. 
        await redis.disconnect()
-       result.success=true
 
+       result.success=true
        res.send(result)
     }catch(err){
         console.log(err)
@@ -32,7 +35,7 @@ router.post("/",async(req,res)=>{//검색어 넣기
    
 })
 
-router.get("/", async(req,res)=>{
+router.get("/word", async(req,res)=>{
 
     const result={
         "success":false,
@@ -41,15 +44,16 @@ router.get("/", async(req,res)=>{
     try{
         await redis.connect()//비동기 함수의 await 붙히고 
         
-        const value= await redis.ZRANGE('searcText', 0, 4,'REV')
-        for await (const {value,score} of redis.zScanIterator('searcText')) {
-            console.log(score);
-            console.log(value)
-        }
+        const value= await redis.ZRANGE('searcText', 0, -1)
+        let index=value.length
+        index=index - 5
+        //\\const tmp=await redis.zRevrange('searcText',0,-1)
+        const tmp= await redis.ZRANGE('searcText', index, -1)
+        console.log(value.length)
         await redis.disconnect()
 
         result.success=true
-        result.value=value
+        result.value=tmp
         res.send(result)
 
     }catch(err){
