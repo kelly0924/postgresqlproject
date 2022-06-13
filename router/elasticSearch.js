@@ -101,8 +101,41 @@ router.get("/",async(req,res)=>{
 
 
                     //should 는 검색어에 scor를 조정 할 때 많이 사용한다. should롤 score의 값을 더 크게 주고 싶은 docment에게 더 크게 주기 가능
-                    
 
+                    // bool:{
+                    //         must:[//반드시 참인 것만 검색 한다. 검색어 참이고 name 있는 그런 document를 검색 한다. 
+                    //             {
+                    //                 match:{
+                    //                     search_name:usInput 
+                    //                 }
+                    //             }
+                    //         ],//입력은 coco로 했을 경우  coco가 아닌 "hellow my name is coco"가 더 먼저 검색된다. 이렇게 scor값 조정가능
+                    //         should:[//score에 값을 hollow인 것에 더 높게 주겠다. 라는 뜻이다. 
+                    //             {
+                    //                 match:{
+                    //                     search_name:"hellow"
+                    //                 }
+                    //             }
+                    //         ]
+                    //     }
+
+
+                    //rang 숫자, 날짜에 대한 query를 rang롤 검색 할 수 있다. 
+                    //4가지 존재 gte(같거나 크다),gt(크다),lte(작거나 같다.), lt(작다)
+
+                    // range:{
+                    //     search_name:{
+                    //         gte:usInput
+                    //     }
+                    // }
+
+                    // range:{
+                    //     search_name:{
+                    //         lt:usInput
+                    //     }
+                    // }
+
+                    //gte, gt lte lt 등 원하는 값을 구하기 위해 다양하게 섞어 쓸 수도 있다. 
                 }
             }
         })
