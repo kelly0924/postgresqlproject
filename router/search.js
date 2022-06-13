@@ -18,12 +18,12 @@ router.post("/",async(req,res)=>{//검색어 넣기
     console.log(searchWord, scoreValue)
     try{
        await redis.connect()//비동기 함수의 await 붙히고 
-       await redis.zAdd("searcText",[
+       await redis.zAdd(redisKey,[
         {
           score: scoreValue,
           value: searchWord
         }])
-       await redis.expire("searcText",12*60*60)//값을 조작하거나 추가 하거나 할때 expire시간을 해줘야 한다. 
+       await redis.expire(redisKey,12*60*60)//값을 조작하거나 추가 하거나 할때 expire시간을 해줘야 한다. 
        await redis.disconnect()
 
        result.success=true
