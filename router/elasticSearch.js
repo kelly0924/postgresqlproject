@@ -1,9 +1,17 @@
 const router=require("express").Router()
 const elastic=require("@elastic/elasticsearch")
+const esInsertFun=require("../function/elasticInsertFun")
 
 router.post("/",async(req, res)=>{//date 넣기
 
-    const userInput=req.body.usInput
+    //elastic 여러가지 option을 위한 input이다. 
+    //const userInput=req.body.usInput
+
+    const titleValue=req.body.title
+    const contentsValue=req.body.contents
+    const dateValue=req.body.writeDate
+    const userValue=req.body.user
+
     const result={
         "success":false
     }
@@ -14,12 +22,15 @@ router.post("/",async(req, res)=>{//date 넣기
     try{
 
         //await esConnect.ping({requestTimeout:1000})
-        await esConnect.index({
-            index:"es_search_test",
-            body:{
-                search_name:userInput
-            }
-        })
+        // await esConnect.index({
+        //     index:"es_search_test",
+        //     body:{
+        //         search_name:userInput
+        //     }
+        // })
+
+        //이 함수를 addMemo api 안에서 호출 할 것이다. 
+        esInsertFun(titleValue,contentsValue,dateValue,userValue)
 
         result.success = true
         res.send(result)
@@ -49,6 +60,7 @@ router.get("/",async(req,res)=>{
         //await esConnect.ping({requestTimeout: 1000})  
         const recvValue= await esConnect.search({
             index:"es_search_test",//index가 es_search_test인 것에
+            //index:"memo_member",
             body:{
                 query:{
 
@@ -64,7 +76,7 @@ router.get("/",async(req,res)=>{
                     // }
                     
 
-                    // match_all:{ }  한경우 모든 입력된 search_name이라는 type에 doucment를 모두 가져 가져 오는 것 
+                    //match_all:{ } // 한경우 모든 입력된 search_name이라는 type에 doucment를 모두 가져 가져 오는 것 
                     //elasticsearch 는 query에 아무런 조건을 주지 않으면 match_all{}과 같이 모든 것을 검색
 
 
