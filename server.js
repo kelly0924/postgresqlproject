@@ -39,9 +39,13 @@ app.use("/verify",verifyApi)
 const searchWordApi=require("./router/search")
 app.use("/search",searchWordApi)
 
-//elasticsearch
+//elasticsearch search opetion test
 const elasticAip=require("./router/elasticSearch")
 app.use("/elastic",elasticAip)
+
+//memo search 
+const memoElasticApi=require("./router/memoElastic")
+app.use("/memoElastic",memoElasticApi)
 
 app.listen(port,()=>{
     console.log(port + "번 포트에서 http통신을 시작!!")

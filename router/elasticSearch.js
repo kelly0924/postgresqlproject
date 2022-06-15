@@ -1,16 +1,11 @@
 const router=require("express").Router()
 const elastic=require("@elastic/elasticsearch")
-const esInsertFun=require("../function/elasticInsertFun")
+
 
 router.post("/",async(req, res)=>{//date 넣기
 
     //elastic 여러가지 option을 위한 input이다. 
-    //const userInput=req.body.usInput
-
-    const titleValue=req.body.title
-    const contentsValue=req.body.contents
-    const dateValue=req.body.writeDate
-    const userValue=req.body.user
+    const userInput=req.body.usInput
 
     const result={
         "success":false
@@ -22,16 +17,12 @@ router.post("/",async(req, res)=>{//date 넣기
     try{
 
         //await esConnect.ping({requestTimeout:1000})
-        // await esConnect.index({
-        //     index:"es_search_test",
-        //     body:{
-        //         search_name:userInput
-        //     }
-        // })
-
-        //이 함수를 addMemo api 안에서 호출 할 것이다. 
-        esInsertFun(titleValue,contentsValue,dateValue,userValue)
-
+        await esConnect.index({
+            index:"es_search_test",
+            body:{
+                search_name:userInput
+            }
+        })
         result.success = true
         res.send(result)
 
