@@ -3,6 +3,7 @@ const router=require("express").Router()
 const path=require("path")//파일 경로를 조합 해주는 패케지 이다.  이것이 있어야 한다.
 const logFuntion=require("./logFun")
 const moment = require("moment")
+const axios=require("axios")
 
 router.get("/",(req,res)=>{  //port 8000에 접속 했을 "/" 라는 뜻
     //우리가 api 한개를 등록 한것이다. get 방법 ("api 이름")
@@ -57,11 +58,20 @@ router.get("/memoPage",(req,res)=>{
     //token 인증을 해준다. --> 만약 인증이 실패 하면 -- > 다시 하게 
     // token 모듈을 만들어서 여기 호출 해서 
     //아예 페이지 들어 오는 것 자체도 위험 하다. 
-    
-    res.sendFile(path.join(__dirname,"../memoPage.html"))
 
-    
+    const publicToken=req.headers.auth//프론트엔드에서 보내준 token
+    axios.post("http://localhost:8000/verify", {
+        token:publicToken
+    })
+    .then(function(response){
+        console.log("token 인증:",response.data.success)
+        if(response.data.success == false){//FE에서 보내준 토큰이 유용할 경우 사용자 인증이 되었다는 뜻
+            res.sendFile(path.join(__dirname,"../loginPage.html"))
+        }
+    })
+    res.sendFile(path.join(__dirname,"../memoPage.html"))
 })
+
 //메모 추가 하기 
 router.get("/addMemo",(req,res)=>{
 
@@ -72,9 +82,18 @@ router.get("/addMemo",(req,res)=>{
     
     logFuntion(idValue,apiName,row,apiCallTime)
 
+    const publicToken=req.headers.auth//프론트엔드에서 보내준 token
+    axios.post("http://localhost:8000/verify", {
+        token:publicToken
+    })
+    .then(function(response){
+        console.log("token 인증:",response.data.success)
+        if(response.data.success == false){//FE에서 보내준 토큰이 유용할 경우 사용자 인증이 되었다는 뜻
+            res.sendFile(path.join(__dirname,"../loginPage.html"))
+        }
+    })
+
     res.sendFile(path.join(__dirname,"../addMemoPage.html"))
-
-
 })
 //coment 
 router.get("/coment",(req,res)=>{
@@ -85,10 +104,19 @@ router.get("/coment",(req,res)=>{
     // const apiCallTime=getCurrentDate()
     
     // logFuntion(idValue,apiName,row,apiCallTime)
+    
+    const publicToken=req.headers.auth//프론트엔드에서 보내준 token
+    axios.post("http://localhost:8000/verify", {
+        token:publicToken
+    })
+    .then(function(response){
+        console.log("token 인증:",response.data.success)
+        if(response.data.success == false){//FE에서 보내준 토큰이 유용할 경우 사용자 인증이 되었다는 뜻
+            res.sendFile(path.join(__dirname,"../loginPage.html"))
+        }
+    })
 
     res.sendFile(path.join(__dirname,"../coment.html"))
-
-
 })
 
 

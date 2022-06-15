@@ -1,7 +1,8 @@
 const multer =require('multer');
 const multerS3 = require('multer-s3')
 const AWS = require("aws-sdk");
-require('dotenv').config();
+require('dotenv').config()
+
 const s3 = new AWS.S3({
     accessKeyId: process.env.ACCESS_KEY_ID,  // 액세스 키 입력
     secretAccessKey: process.env.SECRET_ACCESS_KEY, // 비밀 액세스 키 입력

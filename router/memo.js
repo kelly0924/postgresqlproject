@@ -40,23 +40,6 @@ router.post("/all",(req,res)=>{
                      const apiCallTime=moment(new Date().getTime())
                      //function으로 호출 하기 
                     logFuntion("userid",apiName,reqHost,row,apiCallTime)  
-
-                    // //axios로 api 호출로 loging 남기기
-                    // const apiName="memoAll"//????
-                    // const apiCallTime=getCurrentDate()
-                    // axios.post("http://localhost:8000/logAPi",{
-                    //     userId:"if session userid",
-                    //     name:apiName,
-                    //     sendDate:row.rows,
-                    //     time:apiCallTime
-                    // })
-                    // .then(function(response){
-                    //     console.log("axios",response.data)
-                    // })
-                    // .catch(function (error) {
-                    //     console.log(error)
-                    // })
-            
                     db.end()
                     res.send(row)// 값만 보내 줄것이다. 값을 보내  때는 send로 보내 준다.
             
@@ -75,11 +58,13 @@ router.post("/all",(req,res)=>{
 //메모 추가 하기 
 
 router.post("/", (req,res)=>{
-    // router.post("/",(req,res)=>{
+    
     const titleValue=req.body.title
     const contentsValue=req.body.contents
     const dateValue=req.body.writeDate
     const userValue=req.body.user
+
+
     const imgurlValue=req.body.imgUrl
     console.log(imgurlValue)
 
@@ -112,23 +97,7 @@ router.post("/", (req,res)=>{
                          const reqHost=req.headers.host
                          const apiCallTime=moment(new Date().getTime())
                          //function으로 호출 하기 
-                         logFuntion("userid",apiName,reqHost,row,apiCallTime)  
-
-                        //loging 남기기 api axios
-                        // const apiName="login"//????
-                        // const apiCallTime=getCurrentDate()
-                        // axios.post("http://localhost:8000/logAPi",{
-                        // userId:userValue,
-                        // name:apiName,
-                        // sendDate:row.rows,
-                        // time:apiCallTime
-                        // })
-                        // .then(function(response){
-                        //     console.log("axios",response.data)
-                        // })
-                        // .catch(function (error) {
-                        //     console.log(error)
-                        // })
+                         logFuntion("userid",apiName,reqHost,row,apiCallTime) 
                     }else{
                         console.log(err)
                     }

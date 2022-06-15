@@ -73,7 +73,9 @@
             .then((data)=>{
               console.log(data.urlImg)
               //s3에 저장된 이미지 경로를 얻어 와 메모와 함께 저장 한다. 
-              fetch("/memo",{//result 에 저장이 된다. 
+           
+            
+                fetch("/memo",{//result 에 저장이 된다. 
                     "method": "POST", //요청하는     제이쓴 키 값으로 되였있다. 
                     "headers":{// 값을 여려가 들어 간다.
                         "Content-Type":"application/json",
@@ -97,7 +99,6 @@
                         alert("메모 추가 실패")
                     }
                 })
-            
             })
             
         }

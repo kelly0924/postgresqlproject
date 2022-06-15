@@ -1,8 +1,10 @@
 const router=require("express").Router()
 const path=require("path")// 파일 경로를 조합 해주는 패케지 이다.  이것이 있어야 
 const jwt=require("jsonwebtoken")
+require('dotenv').config()
 
-const secretKey="qwwdfdlfdjfkafhaeseongjhioerhhwadnelasdjefdofdnjflgdjf"//토큰 인증을 위한 key
+const secretKey = process.env.TOKEN_KEY
+
 router.post("/",(req,res)=>{
     //const token=req.headers.auth//프론트엔드에서 보내준 token
     const tokenValue=req.body.token
