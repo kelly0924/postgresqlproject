@@ -36,7 +36,7 @@ router.post("/",async(req,res)=>{
     const sql="SELECT * FROM  memoschema.user WHERE userid=$1 and userpw=$2"
     const values=[idValue,pwValue]
 
-    db.query(sql,values,async(err,data) =>{//이것 때문?
+    db.query(sql,values,(err,data) =>{//이것 때문?
         console.log("검사"+ err) 
         if(!err){
 
@@ -74,7 +74,7 @@ router.post("/",async(req,res)=>{
         }
         db.end()
         res.send(result)// 값만 보내 줄것이다. 값을 보내  때는 send로 보내 준다.
-     })
+    })
 })
 
 //방문자 회원수 api-> 회원이 여러번 로그인 해도 그 회원 수는 한명이므로 1로 된다 중복 불가
@@ -179,6 +179,7 @@ router.post("/signUp",(req,res)=>{
     const idValue=req.body.id
     const pwValue=req.body.pw
     const signDate=req.body.signupDate
+    const rediskey=idValue+"word"
 
     console.log("로그인 요청 정보 확인",req.url)
 
@@ -194,8 +195,8 @@ router.post("/signUp",(req,res)=>{
             console.log(err)
         }
     })
-    const sql="INSERT INTO memoschema.user (userid,userpw,signupdate) VALUES($1,$2,$3)"
-    const valuses=[idValue,pwValue,signDate]
+    const sql="INSERT INTO memoschema.user (userid,userpw,signupdate) VALUES($1,$2,$3,$4)"
+    const valuses=[idValue,pwValue,signDate,redisKey]
     db.query(sql,valuses,(err,rows) =>{
         if(!err){
             result.succeed=true

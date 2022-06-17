@@ -1,20 +1,44 @@
 const router=require("express").Router()
 const path=require("path")//파일 경로를 조합 해주는 패케지 이다.  이것이 있어야 한다.
 const redis=require("redis").createClient()
-const redisKey="searcText"
+const pgInit=require("./postgreSqlDb")//데이터 베이스를 사용하기 위해서 
+const {Client}=require("pg")//pg 는 Client 로 이름 고정 여러개 하기 위해 pg 패캐지를 사용해야 postgrSQL을 사용 가능 하다.
 
-let scoreValue=0
+let redisKey = ""//키가 유일 해야 한다. 
+
+//let scoreValue=0--> 전역 변수는 매우 위험: 가급적 쓰지 않는 것이 좋다
 
 router.post("/",async(req,res)=>{//검색어 넣기 
 
     const searchWord=req.body.userInput
-    //const scoreValue=nowtimer()// 점수를 현재 시간 api 를 호출한 식간으로 할것이다. 
-    scoreValue=scoreValue+1//api 호출 될 때 마다 증가 
+    const idValue=req.body.id
+    const scoreValue=nowtimer()//시간은 계속 증가 하므로 이 값을 score 값으로 사용 하겠다. 
 
     const result = {
-        "success": false
+        "success": false,
     }
+    //db 연결 --> redis key 불러 오기 
+    const db=new Client(pgInit)
+    db.connect((err) => {
+        if(err) {
+            console.log(err)
+        }
+    })
+    const sql="SELECT rediskey FROM  memoschema.user WHERE userid=$1"
+    const values=[idValue]
 
+    db.query(sql,values,(err,data) =>{
+
+        console.log("검사"+ err) 
+        if(!err){
+            const tempjson=data.rows[0].rediskey
+            redisKey=String(tempjson)
+            console.log(redisKey)
+        }
+        db.end()
+    })
+   
+    //redis 
     console.log(searchWord, scoreValue)
     try{
        await redis.connect()//비동기 함수의 await 붙히고 
@@ -23,11 +47,11 @@ router.post("/",async(req,res)=>{//검색어 넣기
           score: scoreValue,
           value: searchWord
         }])
-       await redis.expire(redisKey,12*60*60)//값을 조작하거나 추가 하거나 할때 expire시간을 해줘야 한다. 
        await redis.disconnect()
 
        result.success=true
        res.send(result)
+
     }catch(err){
         console.log(err)
         res.send(result)
@@ -39,21 +63,22 @@ router.get("/word", async(req,res)=>{
 
     const result={
         "success":false,
-        "value":0
+        "rdvalue":null
     }
+
     try{
         await redis.connect()//비동기 함수의 await 붙히고 
-        
-        const value= await redis.ZRANGE('searcText', 0, -1)
-        let index=value.length
-        index=index - 5
-        //\\const tmp=await redis.zRevrange('searcText',0,-1)
-        const tmp= await redis.ZRANGE('searcText', index, -1)
-        console.log(value.length)
+        const totalValue=await redis.ZRANGE(redisKey, 0, -1)
+        result.rdvalue=totalValue
+         console.log(totalValue)
+
+        //    if(size.length > 5){//입력한 수가 5개가 넘을 경우 
+        //         const sortFirstValue= await redis.ZRANGE(redisKey, 0,0)//맨 첫번의 value를 리턴 한다. 
+        //         await redis.ZREM(redisKey,sortFirstValue)//점수가 가장 작은 맨 앞에 것을 삭제 하고 
+        //     }
         await redis.disconnect()
 
         result.success=true
-        result.value=tmp
         res.send(result)
 
     }catch(err){
@@ -62,6 +87,27 @@ router.get("/word", async(req,res)=>{
     }
     
 })
+
+router.delete("/",async(req,res)=>{
+    const result = {
+        "success": false,
+    }
+
+    try{
+        await redis.connect()//비동기 함수의 await 붙히고 
+        // await redis.expire(redisKey,1)//값을 조작하거나 추가 하거나 할때 expire시간을 해줘야 한다. 
+        await redis.del(redisKey)
+        await redis.disconnect()
+ 
+        result.success=true
+        res.send(result)
+ 
+    }catch(err){
+         console.log(err)
+         res.send(result)
+    }
+})
+
 
 const nowtimer=()=>{
     let today = new Date()
